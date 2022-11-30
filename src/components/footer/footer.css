@@ -1,0 +1,58 @@
+.addClass{
+    background-color: linear-gradient(90deg, #FF06C5 0%, #FE0CB5 9.91%, #F5471D 101.97%);
+    cursor: pointer;
+    /* margin: 0 75px !important; */
+}
+
+/* .lastDiv{
+    background-color: linear-gradient(90deg, #FF06C5 0%, #FE0CB5 9.91%, #F5471D 101.97%);
+    width: 100vw;
+    height: 0.7rem;
+    margin: 0.7rem 0 0 0;
+} */
+
+.marginLF{
+    margin: 0 8px;
+}
+
+.iconClass{
+    height: 20px !important;
+    width: 20px !important;
+}
+
+
+/* .css-1oqqzyl-MuiContainer-root {
+    width: 30% !important}; */
+    
+.footerDiv{
+    height: 10px !important;
+    background: linear-gradient(90deg, #FF06C5 0%, #FE0CB6 9.91%, #F5471D 101.97%);
+    /* background-color: black; */
+}
+.imgClass{
+    height: 2.5rem;
+    cursor: pointer;
+}
+.imgSelectClass{
+    height: 1.75rem;
+    cursor: pointer;
+}
+.selectedTxt1{
+    /* font-weight: 500 !important; */
+    
+}
+.selectedTxt{
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+p{
+    margin: 0;
+    /* font-weight: 500; */
+    /* font-size: 0.9rem; */
+}
+
+.selectDiv{
+    display: flex;
+    flex-direction: column;
+    text-align: center !important;
+}
