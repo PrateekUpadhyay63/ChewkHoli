@@ -1,0 +1,247 @@
+<div class="map-wrap">
+  <div class="map" #map></div>
+  <!-- On client requrest -->
+  <!-- <ul id="buttons-marker">
+    <li class="custom-marker">
+      {{ "HEADER.MEMBERMARKER" | translate }} &nbsp;
+      <img
+        class="image-style"
+        src="../../../../../../assets//images//map-marker/custom-member-marker.png"
+        alt="member marker"
+      />
+    </li>
+    <li class="custom-marker" >
+      {{ "HEADER.VEHICLEMARKER" | translate }} &nbsp;
+      <img
+        class="image-style"
+        src="../../../../../../assets//images//map-marker/custom-vehicle-marker.png"
+        alt="vehicle marker"
+      />
+    </li>
+    <li class="custom-marker">
+      {{ "HEADER.IPCAMERAMARKER" | translate }} &nbsp;
+      <img
+        class="image-style"
+        src="../../../../../../assets//images//map-marker/custom-ipcamera-marker.png"
+        alt="ip camera marker"
+      />
+    </li>
+  </ul> -->
+</div>
+
+<!-- Add/Edit Pin Drop Modal -->
+<ng-template #addEditPinDropModal let-modal>
+  <form [formGroup]="addEditPinDrop" (ngSubmit)="getDataFoSubmit()">
+    <div class="modal-header">
+      <h5
+        *ngIf="!isPinDropEdit"
+        class="modal-title modal-primary"
+        id="myModalLabel160"
+      >
+        {{ "HEADER.ADDPINDROP" | translate }}
+      </h5>
+      <h5
+        *ngIf="isPinDropEdit"
+        class="modal-title modal-primary"
+        id="myModalLabel160"
+      >
+        {{ "HEADER.UPDATEPINDROP" | translate }}
+      </h5>
+      <button type="button" class="close" (click)="cancel()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" tabindex="0">
+      <div class="row">
+        <!-- Message -->
+        <div class="col-12">
+          <div class="form-group row">
+            <div class="col-sm-3 col-form-label">
+              <label> {{ "HEADER.MESSAGE" | translate }}</label>
+            </div>
+            <div class="col-sm-7">
+              <textarea
+                name="message"
+                formControlName="message"
+                maxlength="100"
+                [ngClass]="{
+                  'is-invalid': submitted && pinDropFormControl.message.errors
+                }"
+                type="text"
+                placeholder="{{ 'HEADER.ENTERMSG' | translate }}"
+                class="form-control"
+              >
+              </textarea>
+              <div
+                *ngIf="submitted && pinDropFormControl.message.errors"
+                class="form-text text-danger"
+              >
+                <!-- <span *ngIf="pinDropFormControl.message.errors.required">Message</span>
+                  <small *ngIf="pinDropFormControl.message.errors.maxlength">Device Name must not exceed 50 Character </small> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- color -->
+        <div class="col-12">
+          <div class="form-group row">
+            <div class="col-sm-3 col-form-label">
+              <label>{{ "HEADER.COLOR" | translate }}</label>
+            </div>
+            <div class="col-sm-7">
+              <div class="row">
+                <div class="col-10">
+                  <input
+                    disabled
+                    value="{{ this.addEditPinDrop.value.colorPicker }}"
+                    name="color"
+                    class="form-control"
+                    maxlength="50"
+                  />
+                </div>
+                <div class="color-picker" class="col-2">
+                  <ngx-colors
+                    format="hex"
+                    acceptLabel="Select"
+                    cancelLabel="Cancel"
+                    colorsAnimation="popup"
+                    ngx-colors-trigger
+                    style="display: inline-block; margin: 5px"
+                    formControlName="colorPicker"
+                    (change)="onColorSelect($event)"
+                    attachTo="chat-component-id"
+                  ></ngx-colors>
+                </div>
+              </div>
+              <div *ngIf="checkAssignedColor" class="form-text text-danger">
+                <span>{{ "HEADER.SELECTEDCOLORERROR" | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- longitude -->
+        <div class="col-12">
+          <div class="form-group row">
+            <div class="col-sm-3 col-form-label">
+              <label>{{ "HEADER.LONGITUDE" | translate }}</label>
+            </div>
+            <div class="col-sm-7">
+              <input
+                name="longitude"
+                disabled
+                formControlName="longitude"
+                maxlength="50"
+                [ngClass]="{
+                  'is-invalid': submitted && pinDropFormControl.longitude.errors
+                }"
+                required
+                type="text"
+                placeholder="{{ 'HEADER.ENTERLONGITUDE' | translate }}"
+                class="form-control"
+              />
+              <!-- <div
+                *ngIf="submitted && pinDropFormControl.longitude.errors"
+                class="form-text text-danger"
+              >
+                <span *ngIf="pinDropFormControl.longitude.errors.required"
+                  >longitude</span
+                > -->
+              <!-- <small *ngIf="pinDropFormControl.longitude.errors.minlength">{{'HEADER.RTSPVAL'|translate}}</small>
+                <small *ngIf="pinDropFormControl.longitude.errors.maxlength">{{'HEADER.RTSPCHAR'|translate}}</small> -->
+              <!-- </div> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- latitude -->
+        <div class="col-12">
+          <div class="form-group row">
+            <div class="col-sm-3 col-form-label">
+              <label>{{ "HEADER.LATITUDE" | translate }}</label>
+            </div>
+            <div class="col-sm-7">
+              <input
+                name="latitude"
+                disabled
+                formControlName="latitude"
+                maxlength="50"
+                [ngClass]="{
+                  'is-invalid': submitted && pinDropFormControl.latitude.errors
+                }"
+                required
+                type="text"
+                placeholder="{{ 'HEADER.ENTERLATITUDE' | translate }}"
+                class="form-control"
+              />
+              <!-- <div
+                *ngIf="submitted && pinDropFormControl.latitude.errors"
+                class="form-text text-danger"
+              >
+                <span *ngIf="pinDropFormControl.latitude.errors.required"
+                  >latitude</span
+                > -->
+              <!-- <small *ngIf="pinDropFormControl.latitude.errors.minlength">{{'HEADER.RTSPVAL'|translate}}</small>
+                <small *ngIf="pinDropFormControl.latitude.errors.maxlength">{{'HEADER.RTSPCHAR'|translate}}</small> -->
+              <!-- </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button *ngIf="!isPinDropEdit" class="btn btn-primary" rippleEffect>
+        {{ "HEADER.SUBMIT" | translate }}
+      </button>
+      <button *ngIf="isPinDropEdit" class="btn btn-primary" rippleEffect>
+        {{ "HEADER.UPDATE" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="cancel()"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }}
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Pin drop Delete Modal -->
+<ng-template #pinDropDeleteModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">
+      {{ "HEADER.DELETEMODAL" | translate }}
+    </h5>
+    <button
+      type="button"
+      class="close"
+      (click)="modal.dismiss('Cross click')"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body lh-sm text-wrap text-break" tabindex="0" ngbAutofocus>
+    {{ "HEADER.DELETEMSG" | translate }}
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-danger"
+      (click)="deletePinDrop()"
+      rippleEffect
+    >
+      {{ "HEADER.DELETE" | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-info"
+      (click)="modal.close('Accept click')"
+      rippleEffect
+    >
+      {{ "HEADER.CANCEL" | translate }}
+    </button>
+  </div>
+</ng-template>

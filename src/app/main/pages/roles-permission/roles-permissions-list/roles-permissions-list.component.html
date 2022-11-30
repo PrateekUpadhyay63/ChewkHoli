@@ -1,0 +1,382 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- User List -->
+    <section class="users-list-wrapper">
+      <div class="card">
+        <div class="row d-flex justify-content-between m-1">
+          <div class="col-md-3 col-3">
+            <div class="input-group search-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="{{ 'HEADER.SEARCHBYROLENAME' | translate }}"
+                [(ngModel)]="searchValue"
+                (keyup)="onRoleSearch()"
+              />
+              <button
+                type="button"
+                *ngIf="searchValue.length > 0"
+                (click)="onSearchClear()"
+                class="btn bg-transparent onSearch"
+              >
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-3 col-md-3">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="selectFileType"
+                [(ngModel)]="selectedFileType"
+                name="selecteFileType"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.EXPORTFILE' | translate }}"
+                (change)="filterFileType($event)"
+              ></ng-select>
+            </fieldset>
+          </div>
+          <div class="col-3 col-md-3">
+            <fieldset class="form-group">
+              <ng-select
+                name="selectedStatus"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.SELECTESTATUS' | translate }}"
+                (change)="filterByStatus($event)"
+                (clear)="onFilterClear()"
+              >
+                <ng-option *ngFor="let item of statusData" [value]="item.id">
+                  {{ item?.name }}
+                </ng-option>
+              </ng-select>
+            </fieldset>
+          </div>
+          <div class="col-md-3 col-3" *ngIf="canAddUser">
+            <button
+              class="btn btn-primary"
+              rippleEffect
+              (click)="addNewRolePermission()"
+            >
+              <i
+                data-feather="plus"
+                class="d-sm-none d-inline-block mr-0 mr-sm-1"
+              ></i
+              ><span class="d-none d-sm-inline-block">{{
+                "HEADER.ADDNEWROLEPERMISSION" | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+        <ngx-datatable
+          [rows]="rows"
+          [rowHeight]="50"
+          class="bootstrap core-bootstrap"
+          [limit]="selectedOption"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+          [count]="page.limit"
+          [offset]="page.offset"
+          [limit]="page.limit"
+        >
+          <!-- <ngx-datatable-column name="ID" prop="id" [width]="60">
+            <ng-template let-row="row"  ngx-datatable-cell-template>
+              <div class="d-flex align-items-center">
+                <div class="cell-line-height">
+                    <span class="font-weight-bold">{{ row }}</span>
+                </div>
+              </div>
+            </ng-template> </ngx-datatable-column> -->
+          <ngx-datatable-column
+            name="{{ 'HEADER.ROLENAME' | translate }}"
+            prop="name"
+            [width]="100"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 15 }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.PERMISSIONASSIGNED' | translate }}"
+            [sortable]="false"
+            prop="permissions"
+            [width]="180"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <ng-template
+                ngFor
+                let-obj
+                [ngForOf]="value | slice: 0:1"
+                let-i="index"
+              >
+                <span *ngIf="i <= 1"> {{ obj.name }}... </span>
+              </ng-template>
+              <ng-container *ngIf="value.length == 0">
+                <span> No Permission Assigned</span>
+              </ng-container>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.STATUS' | translate }}"
+            prop="status"
+            [width]="40"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div
+                class="badge badge-pill"
+                [ngClass]="{
+                  'badge-light-success': value == 'Active',
+                  'badge-light-danger': value == 'In-active'
+                }"
+              >
+                <span *ngIf="value == 'Active'"> Active </span>
+                <span *ngIf="value == 'In-active'"> In-active </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ADDEDAT' | translate }}"
+            prop="createdAt"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.UPDATEDAT' | translate }}"
+            prop="updatedAt"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ACTION' | translate }}"
+            [width]="60"
+            [sortable]="false"
+            *ngIf="canViewUser || canEditUser || canDeleteUser"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div ngbDropdown container="body">
+                <button
+                  ngbDropdownToggle
+                  type="button"
+                  class="btn icon-btn btn-sm hide-arrow"
+                  rippleEffect
+                >
+                  <span
+                    [data-feather]="'more-vertical'"
+                    [class]="'cursor-pointer'"
+                  ></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <a
+                    routerLink="/roles-permission-management/view/{{ row.id }}"
+                    ngbDropdownItem
+                  >
+                    <span
+                      [data-feather]="'file-text'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.VIEW" | translate }}</a
+                  >
+                  <span
+                    (click)="
+                      updateStatusmodal(
+                        updateStatusmodalOpen,
+                        row.id,
+                        row.name,
+                        row.status
+                      )
+                    "
+                    ngbDropdownItem
+                  >
+                    <span
+                      [data-feather]="'edit-3'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.UPDATESSTATUS" | translate }}</span
+                  >
+                  <a
+                    routerLink="/roles-permission-management/edit/{{ row.id }}"
+                    ngbDropdownItem
+                  >
+                    <span
+                      [data-feather]="'edit'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.EDIT" | translate }}</a
+                  >
+                  <span
+                    ngbDropdownItem
+                    (click)="deleteModal(deleteModalOpen, row.id, row.name)"
+                    ><span
+                      [data-feather]="'trash'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.DELETE" | translate }}</span
+                  >
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="1"
+            [size]="page.limit"
+            [count]="page.limit"
+          >
+          </datatable-pager>
+        </ngx-datatable>
+
+        <div class="pagination mb-2" *ngIf="rows.length">
+          <ul class="pager">
+            <i
+              *ngIf="current_page > 1"
+              class="datatable-icon-left"
+              (click)="pagePrev()"
+            ></i>
+            <ng-container *ngFor="let pages of fakeArray; let p = index">
+              <ng-container *ngIf="p + 1 > pageIfy && p + 1 <= pageIfx">
+                <li
+                  class="numbers"
+                  [ngClass]="
+                    p + 1 == current_page ? 'numbers-active' : 'numbers'
+                  "
+                  (click)="pagination(p + 1)"
+                >
+                  {{ p + 1 }} &nbsp;
+                </li>
+              </ng-container>
+            </ng-container>
+            <i
+              *ngIf="current_page < page.count"
+              class="datatable-icon-right"
+              (click)="pageNext()"
+            ></i>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!--/ User List -->
+  </div>
+
+  <!-- Delete Modal -->
+  <ng-template #deleteModalOpen let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">
+        {{ "HEADER.DELETEROLEPERMISSION" | translate }}
+      </h5>
+      <button
+        type="button"
+        class="close"
+        (click)="modal.dismiss('Cross click')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div
+      class="modal-body lh-sm text-wrap text-break"
+      tabindex="0"
+      ngbAutofocus
+    >
+      {{ "HEADER.DELETEMSG" | translate }} {{ roleName }}?
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="deleteRolePermission(deleterUserId)"
+        rippleEffect
+      >
+        {{ "HEADER.DELETE" | translate }} {{ roleName }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-info"
+        (click)="modal.close('Accept click')"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }} {{ roleName }}
+      </button>
+    </div>
+  </ng-template>
+  <!-- / Delete Modal -->
+
+  <!-- Update Status Modal -->
+  <ng-template #updateStatusmodalOpen let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">
+        {{ "HEADER.UPDATEROLEPERMISSION" | translate }}
+      </h5>
+      <button
+        type="button"
+        class="close"
+        (click)="modal.dismiss('Cross click')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div
+      *ngIf="roleStatus == 'Active'"
+      class="modal-body"
+      tabindex="0"
+      ngbAutofocus
+    >
+      {{ "HEADER.ACTIVATEMSG" | translate }} {{ roleName }}?
+    </div>
+    <div
+      *ngIf="roleStatus == 'In-active'"
+      class="modal-body"
+      tabindex="0"
+      ngbAutofocus
+    >
+      {{ "HEADER.DEACTIVATEMSG" | translate }} {{ roleName }}?
+    </div>
+    <div class="modal-footer">
+      <button
+        *ngIf="roleStatus == 'Active'"
+        type="button"
+        class="btn btn-danger"
+        (click)="updateStatus()"
+        rippleEffect
+      >
+        {{ "HEADER.DEACTIVATE" | translate }}
+      </button>
+      <button
+        *ngIf="roleStatus == 'In-active'"
+        type="button"
+        class="btn btn-success"
+        (click)="updateStatus()"
+        rippleEffect
+      >
+        {{ "HEADER.ACTIVATE" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-info"
+        (click)="modal.close('Accept click')"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }}
+      </button>
+    </div>
+  </ng-template>
+  <!-- / Update Status Modal -->
+</div>

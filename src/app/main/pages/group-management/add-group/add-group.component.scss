@@ -1,0 +1,19 @@
+@import '@core/scss/angular/libs/flatpickr.component.scss';
+@import '@core/scss/angular/libs/select.component.scss';
+@import '@core/scss/base/pages/app-user.scss';
+
+// .ng-select.disable-arrow .ng-arrow-wrapper .ng-arrow {
+//     display: none;
+//   }
+
+//  .ng-select .ng-select-multiple .ng-value {
+//   background-color: rgba(115, 103, 240, 0.12) !important;
+//   color: white !important;
+//   // color: #7367f0 !important;
+// }
+
+.ng-value-label{
+    inline-size: 8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

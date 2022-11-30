@@ -1,0 +1,137 @@
+<div style="margin: 10px; padding-bottom: 10px">
+    <span style="cursor: pointer" (click)="onChartDataRefresh()">
+      <i [size]="25" [data-feather]="'rotate-cw'"></i>
+    </span>
+  </div>
+  <section id="Donut-and-scatter-charts">
+    <!-- Line Chart Starts-->
+  
+    <div class="row">
+      <!-- Temp and status -->
+      <div class="col-3">
+        <div *ngIf="chatServerData" class="card">
+          <div style="text-align: center !important">
+            <span class="card-title"> Status</span>
+          </div>
+          <div style="text-align: center" class="card-body">
+            Server Status - &nbsp; &nbsp;&nbsp;
+            <ng-container *ngIf="chatServerData?.serviceStatus[0].status">
+              <span
+                class="badge badge-glow badge-success"
+                *ngIf="statusData.status === 'Active'"
+                >{{ statusData.status }}</span
+              >
+              <span
+                class="badge badge-glow badge-danger"
+                *ngIf="statusData.status === 'In-active'"
+                >{{ statusData.status }}</span
+              >
+              <span
+                class="badge badge-glow badge-warning"
+                *ngIf="statusData.status === 'Not Reachable'"
+                >{{ statusData.status }}</span
+              >
+            </ng-container>
+            <br /><br />
+            CPU Temperature - &nbsp; &nbsp;
+            <span style="font-weight: 500"></span>
+            {{ chatServerData.serviceTemperature[0].temperature }} ℃
+          </div>
+        </div>
+      </div>
+      <div class="col-9">
+        <div class="card">
+          <div style="text-align: center !important">
+            <span class="card-title">Band Width</span>
+          </div>
+          <div class="card-body">
+            <div id="bandWidthLineChart">
+              <apx-chart
+                #bandWidthLineChart
+                *ngIf="bandWidthData"
+                [series]="bandWidthchartOptions.series"
+                [chart]="bandWidthchartOptions.chart"
+                [xaxis]="bandWidthchartOptions.xaxis"
+                [stroke]="bandWidthchartOptions.stroke"
+                [colors]="bandWidthchartOptions.colors"
+                [dataLabels]="bandWidthchartOptions.dataLabels"
+                [legend]="bandWidthchartOptions.legend"
+                [markers]="bandWidthchartOptions.markers"
+                [grid]="bandWidthchartOptions.grid"
+                [yaxis]="bandWidthchartOptions.yaxis"
+                [title]="bandWidthchartOptions.title"
+              ></apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Storage Donut Chart -->
+      <div *ngIf="chatServerData" class="col-lg-4 col-4">
+        <div class="card">
+          <div style="text-align: center !important">
+            <span class="card-title">Storage</span>
+          </div>
+          <div class="card-body">
+            <div id="storageChart">
+              <apx-chart
+                #storageChart
+                [series]="storageChartOptions.series"
+                [chart]="storageChartOptions.chart"
+                [labels]="storageChartOptions.labels"
+                [responsive]="storageChartOptions.responsive"
+                [dataLabels]="storageChartOptions.dataLabels"
+                [legend]="storageChartOptions.legend"
+              ></apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--/  Storage Donut Chart -->
+      <!-- Memeory -->
+      <div class="col-lg-4 col-4">
+        <div *ngIf="chatServerData" class="card">
+          <div style="text-align: center !important">
+            <span class="card-title">Memory(RAM)</span>
+          </div>
+          <div class="card-body">
+            <div id="memoryChart">
+              <apx-chart
+                #memoryChart
+                [series]="memoryhartOptions.series"
+                [chart]="memoryhartOptions.chart"
+                [labels]="memoryhartOptions.labels"
+                [responsive]="memoryhartOptions.responsive"
+                [dataLabels]="memoryhartOptions.dataLabels"
+                [legend]="memoryhartOptions.legend"
+              ></apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- CPU usage -->
+      <div class="col-lg-4 col-4">
+        <div *ngIf="chatServerData" class="card">
+          <div style="text-align: center !important">
+            <span class="card-title">CPU Usage</span>
+          </div>
+          <div class="card-body">
+            <div id="cpuUsage">
+              <apx-chart
+                #cpuUsage
+                [series]="cpuUsageCartOptions.series"
+                [chart]="cpuUsageCartOptions.chart"
+                [labels]="cpuUsageCartOptions.labels"
+                [responsive]="cpuUsageCartOptions.responsive"
+                [dataLabels]="cpuUsageCartOptions.dataLabels"
+                [legend]="cpuUsageCartOptions.legend"
+              ></apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

@@ -1,0 +1,94 @@
+<!-- <lib-min-max-popup> -->
+<div *ngIf="show" class="slideout-content conference">
+    <!-- Modal to add new user starts-->
+    <div
+      class="modalsd modal-slide-in sdfade new-user-modal"
+      id="modals-slide-in"
+    >
+      <div class="modal-dialog">
+        <form
+          class="add-new-user p-0 modal-content"
+          (ngSubmit)="(newUserForm.form.valid)"
+          #newUserForm="ngForm"
+        >
+          <div class="modal-body flex-grow-1">
+            <div class="row p-2">
+              <div class="col-6 p-0">
+                <div class="heading">
+                  <h1>{{selectedChat.name || selectedChat.group_name}}</h1>
+                </div>
+              </div>
+              <div class="col-6 p-0">
+                <div class="heading text-right">
+                  <h1>{{totalMembers}} Members on call</h1>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex p-2 conference-box">
+                <div [ngClass]="isSmallScreen == true && isShowDiv == true ? 'hideConference' : 'users align-items-center justify-content-center d-flex'">
+                    <div  id="jitsi-iframe" style="margin-right: 20px;"></div>
+                </div>
+              <div class="row" *ngIf="isShowDiv">
+                <div class="chat-box chat-application">
+                  <!-- <div class="d-flex top">
+                    <div class="heading">
+                      <h1>Chat</h1>
+                    </div>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                      (click)="closed()"
+                    >
+                       ×
+                    </button>
+                  </div> -->
+                  <div class="custom-right">
+                      <app-chat-active-sidebar [selectedChat]="selectedChat"></app-chat-active-sidebar>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class=" bottom text-center">
+                <div class="tab">
+                    <div class="mic">
+                      <img
+                      *ngIf="isAudioMuted"
+                      (click)="executeCommand('toggleAudio')"
+                      src="../../../../../../assets/images/conference/Union (1).png"
+                        alt="img"
+                      />
+                      <img 
+                      style="height: 20px; width: 20px;"
+                      *ngIf="!isAudioMuted"
+                      (click)="executeCommand('toggleAudio')"
+                      src="../../../../../../assets/images/conference/mic.svg" alt="">
+                    </div>
+                    <div class="tileview"(click)="executeCommand('setTileView')"  >
+                        <i data-feather="grid"></i>
+                    </div>
+                    <div 
+                   
+                    (click)="endCall()" class="call">
+                      <img
+                        src="../../../../../../assets/images/conference/call.png"
+                        alt="img"
+                      />
+                    </div>
+                  </div>
+              <div class="chat-icon" (click)="toggleChat()">
+                <img
+                  src="../../../../../../assets/images/conference/message.png"
+                  alt="img"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Modal to add new user Ends-->
+  </div>
+<!-- </lib-min-max-popup> -->

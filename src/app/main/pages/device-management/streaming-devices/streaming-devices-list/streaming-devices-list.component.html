@@ -1,0 +1,1060 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- Streaming Devices List -->
+    <section class="vehicle-list-wrapper">
+      <div class="card">
+        <div class="row d-flex justify-content-between m-1">
+          <div class="col-md-6 col-6">
+            <div class="input-group search-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="{{ 'HEADER.SEARCH' | translate }}"
+                [(ngModel)]="searchValue"
+                (keyup)="onIPStreamSearch()"
+              />
+              <button
+                type="button"
+                *ngIf="searchValue.length > 0"
+                (click)="onSearchClear()"
+                class="btn bg-transparent onSearch"
+              >
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-3" *ngIf="currentLoggedInUser.Role.id == 5">
+            <ng-select
+              bindLabel="name"
+              bindValue="id"
+              placeholder="{{ 'HEADER.SEARCHORG' | translate }}"
+              (change)="filterOrganization($event)"
+              (clear)="onFilterClear()"
+            >
+              <ng-option
+                *ngFor="let item of organizationData"
+                [value]="item.id"
+              >
+                {{ item?.name }}
+              </ng-option>
+            </ng-select>
+          </div>
+
+          <div *ngIf="canAddStreamingDevice" class="col-md-3 col-3">
+            <button
+              class="btn btn-primary"
+              rippleEffect
+              (click)="addNewStreamingDevice(modalAddStreamD)"
+            >
+              <i
+                data-feather="plus"
+                class="d-sm-none d-inline-block mr-0 mr-sm-1"
+              ></i
+              ><span class="d-none d-sm-inline-block">{{
+                "HEADER.ADDSTREAMINGDEVICE" | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+        <ngx-datatable
+          [rows]="rows"
+          [rowHeight]="50"
+          class="bootstrap core-bootstrap"
+          [limit]="selectedOption"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+          [count]="page.limit"
+          [offset]="page.offset"
+          [limit]="page.limit"
+        >
+          <ngx-datatable-column
+            name="{{ 'HEADER.DEVICENAME' | translate }}"
+            prop="name"
+            [width]="100"
+          >
+            <ng-template
+              let-row="row"
+              let-name="value"
+              ngx-datatable-cell-template
+            >
+              <div class="cell-line-height">
+                <span class="font-weight-bold"
+                  >{{ name.length > 10 ? (name | slice: 0:15) + ".." : name }}
+                </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- <ngx-datatable-column name="Icon" prop="Icon" [width]="50">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{value | date:'dd/MM/yyyy hh:mm a'}}
+            </ng-template>
+          </ngx-datatable-column> -->
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ICON' | translate }}"
+            prop="icon"
+            [width]="50"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div class="d-flex align-items-center">
+                <div *ngIf="value != ''; else customAvatar">
+                  <!-- class="rounded-circle mr-1" -->
+                  <img
+                    class="media-left mr-1"
+                    href="javascript:void(0)"
+                    src="{{ value | secure | async }}"
+                    height="40"
+                    width="40"
+                    alt="logo"
+                  />
+                </div>
+
+                <ng-template #customAvatar>
+                  <img
+                    class="rounded-circle mr-1"
+                    src="../../../../../../assets/images/avatars//10-small.png"
+                    height="32"
+                    width="32"
+                    alt="datatable-avatar"
+                  />
+                </ng-template>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.LINK' | translate }}"
+            prop="rts_link"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <a href="javascript:void(0);" (click)="getCurrentVideo(value)">
+                {{ value.length > 6 ? (value | slice: 0:15) + ".." : value }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ORGANIZATIONID' | translate }}"
+            prop="Organization.name"
+            [width]="150"
+            *ngIf="currentLoggedInUser.Role.id == 5"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 12 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.COMMENTS' | translate }}"
+            prop="comments"
+            [width]="100"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value.length > 6 ? (value | slice: 0:15) + ".." : value }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.SERIALNUMBER' | translate }}"
+            prop="serial_number"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value.length > 10 ? (value | slice: 0:15) + ".." : value }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ACTIONS' | translate }}"
+            [width]="30"
+            [sortable]="false"
+            *ngIf="canEditStreamingDevice || canDeleteStreamingDevice"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div class="d-flex align-items-center col-actions">
+                <a
+                  class="mr-1"
+                  href="javascript:void(0);"
+                  container="body"
+                  *ngIf="canEditStreamingDevice"
+                  (click)="editStreamDevice(EditStreamModal, row)"
+                  ><i size="18" data-feather="edit"></i
+                ></a>
+                <span
+                  *ngIf="canDeleteStreamingDevice"
+                  class="mr-1"
+                  (click)="deletStreamDModal(modalDeletStreamD, row)"
+                  container="body"
+                  ><i size="18" data-feather="trash-2"></i
+                ></span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+
+        <div class="pagination mb-2" *ngIf="rows?.length">
+          <ul class="pager">
+            <i
+              *ngIf="current_page > 1"
+              class="datatable-icon-left"
+              (click)="pagePrev()"
+            ></i>
+            <ng-container *ngFor="let pages of fakeArray; let p = index">
+              <ng-container *ngIf="p + 1 > pageIfy && p + 1 <= pageIfx">
+                <li
+                  class="numbers"
+                  [ngClass]="
+                    p + 1 == current_page ? 'numbers-active' : 'numbers'
+                  "
+                  (click)="pagination(p + 1)"
+                >
+                  {{ p + 1 }} &nbsp;
+                </li>
+              </ng-container>
+            </ng-container>
+            <i
+              *ngIf="current_page < page.count"
+              class="datatable-icon-right"
+              (click)="pageNext()"
+            ></i>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!--/ streaming device  List -->
+  </div>
+
+  <!-- Add Stream Device Modal -->
+  <ng-template #modalAddStreamD let-modal>
+    <form
+      [formGroup]="AddStreamingDevice"
+      (ngSubmit)="onAddNewStreamingDevice()"
+    >
+      <div class="modal-header">
+        <h5 class="modal-title modal-primary" id="myModalLabel160">
+          {{ "HEADER.ADDNEWSTREAMINGDEVICE" | translate }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="cancel()"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0">
+        <div class="row">
+          <!-- Device Name Input-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.DEVICENAME" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="device_name"
+                  formControlName="device_name"
+                  maxlength="30"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.device_name.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.DEVICENAME' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.device_name.invalid"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.device_name.errors.required">{{
+                    "HEADER.DEVREQUIRED" | translate
+                  }}</span>
+                  <small *ngIf="formC.device_name.errors.minlength"
+                    >{{ "HEADER.DEVVAL" | translate }}
+                  </small>
+                  <small *ngIf="formC.device_name.errors.maxlength"
+                    >{{ "HEADER.DEVCHAR" | translate }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Serial Number -->
+
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.SERIALNUMBER" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="serialNumber"
+                  formControlName="serialNumber"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.serialNumber.errors
+                  }"
+                  required
+                  type="number"
+                  placeholder="eg:123456789"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.serialNumber.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.serialNumber.errors.required">{{
+                    "HEADER.SERIALNUMBER" | translate
+                  }}</span>
+                  <!-- <small *ngIf="formC.serialNumber.errors.minlength">Device Name atleast 5 Character </small>
+                  <small *ngIf="formC.serialNumber.errors.maxlength">Device Name must not exceed 50 Character </small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comments -->
+
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.COMMENTS" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <textarea
+                  name="comment"
+                  formControlName="comment"
+                  maxlength="100"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.comment.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.COMMENTS' | translate }}"
+                  class="form-control"
+                >
+                </textarea>
+                <div
+                  *ngIf="submitted && formC.comment.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.comment.errors.required">{{
+                    "HEADER.COMMENTSREQ" | translate
+                  }}</span>
+                  <!-- <small *ngIf="formC.comment.errors.minlength">Device Name atleast 5 Character </small>
+                          <small *ngIf="formC.comment.errors.maxlength">Device Name must not exceed 50 Character </small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RTSP Link Input -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.RTSPLINK" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="rtsp_link"
+                  formControlName="rtsp_link"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.rtsp_link.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.RTSPLINK' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.rtsp_link.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.rtsp_link.errors.required">{{
+                    "HEADER.RTSPREQUIRED" | translate
+                  }}</span>
+                  <small *ngIf="formC.rtsp_link.errors.minlength">{{
+                    "HEADER.RTSPVAL" | translate
+                  }}</small>
+                  <small *ngIf="formC.rtsp_link.errors.maxlength">{{
+                    "HEADER.RTSPCHAR" | translate
+                  }}</small>
+                  <!-- <small *ngIf="formC.rtsp_link.errors.pattern">Enter Valid RTSP link </small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Select Org. -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.SELECTORGANIZATION" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  bindLabel="name"
+                  bindValue="id"
+                  placeholder="{{ 'HEADER.SELECTORGANIZATION' | translate }}"
+                  formControlName="orgnization_id"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.orgnization_id.errors
+                  }"
+                >
+                  <ng-option
+                    *ngFor="let item of organizationName"
+                    [value]="item.id"
+                  >
+                    {{ item.name }}
+                  </ng-option>
+                </ng-select>
+                <div
+                  *ngIf="submitted && formC.orgnization_id.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.orgnization_id.errors.required">{{
+                    "HEADER.ORGREQUIRED" | translate
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- longitude -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.LONLITUDE" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="longitude"
+                  formControlName="longitude"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.longitude.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.LONLITUDE' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.longitude.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.longitude.errors.required">{{
+                    "HEADER.LONLITUDEREQUIRED" | translate
+                  }}</span>
+                  <!-- <small *ngIf="formC.longitude.errors.minlength">{{'HEADER.RTSPVAL'|translate}}</small>
+                  <small *ngIf="formC.longitude.errors.maxlength">{{'HEADER.RTSPCHAR'|translate}}</small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- latitude -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.LATITUDE" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="latitude"
+                  formControlName="latitude"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.latitude.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.LATITUDE' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.latitude.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.latitude.errors.required">{{
+                    "HEADER.LATITUDEREQUIRED" | translate
+                  }}</span>
+                  <!-- <small *ngIf="formC.latitude.errors.minlength">{{'HEADER.RTSPVAL'|translate}}</small>
+                  <small *ngIf="formC.latitude.errors.maxlength">{{'HEADER.RTSPCHAR'|translate}}</small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- group ids -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.GROUPSELECT" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  name="group_id"
+                  formControlName="group_ids"
+                  [items]="groupName"
+                  [multiple]="true"
+                  bindLabel="name"
+                  bindValue="group_id"
+                  placeholder="{{ 'HEADER.GROUPSELECT' | translate }}"
+                >
+                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                    <span class="ng-value-label">
+                      {{ item.name | titlecase }}</span
+                    >
+                    <span
+                      class="ng-value-icon right"
+                      (click)="clear(item)"
+                      aria-hidden="true"
+                      >×</span
+                    >
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- image -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.ICON" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <label
+                  class="btn btn-sm btn-primary mb-75 mr-75"
+                  for="change-picture"
+                >
+                  <span class="d-none d-sm-block">{{
+                    "HEADER.CHOOSEFILE" | translate
+                  }}</span>
+
+                  <input
+                    name="device_name"
+                    type="file"
+                    id="change-picture"
+                    accept=".jpeg, .jpg, .jpe, .png"
+                    hidden
+                    (change)="uploadFiles($event)"
+                    required
+                    placeholder="{{ 'HEADER.VEHICLELOGO' | translate }}"
+                    class="form-control"
+                  />
+                  <!-- <span *ngIf="submitted && !profile_image" class="invalid-form"> -->
+                  <!-- </span> -->
+                </label>
+
+                <div *ngIf="logo" class="logoo">
+                  <img src="{{ logo }}" alt="" />
+                </div>
+                <div class="invalid-form">
+                  <small class="form-text">{{
+                    "HEADER.IMAGEINSTRUCTION" | translate
+                  }}</small>
+                </div>
+                <span class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="imageError">{{
+                    "HEADER.IMAGEERROR" | translate
+                  }}</small>
+                </span>
+                <div
+                  *ngIf="submitted && !uploadProfileImage"
+                  class="form-text text-danger"
+                >
+                  <span>{{ "HEADER.STDLOGOREQ" | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" rippleEffect>
+          <!-- {{ 'HEADER.ADD' | translate }}   -->
+          {{ "HEADER.SUBMIT" | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel()"
+          rippleEffect
+        >
+          {{ "HEADER.CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-template>
+  <!-- / Add Stream Device Modal -->
+
+  <!-- Edit Stream Device Modal -->
+  <ng-template #EditStreamModal let-modal>
+    <form
+      [formGroup]="EditStreamingDeviceFG"
+      (ngSubmit)="onEditStreamingDevice()"
+    >
+      <div class="modal-header">
+        <h5 class="modal-title modal-primary" id="myModalLabel160">
+          {{ "HEADER.EDITSTREAMINGDEVICE" | translate }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="cancel_edit()"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0">
+        <div class="row">
+          <!-- Device Name Input-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.DEVICENAME" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="edit_device_name"
+                  formControlName="edit_device_name"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.edit_device_name.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.DEVICENAME' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && EditformC.edit_device_name.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.edit_device_name.errors.required">{{
+                    "HEADER.DEVREQUIRED" | translate
+                  }}</span>
+                  <small *ngIf="EditformC.edit_device_name.errors.minlength"
+                    >{{ "HEADER.DEVVAL" | translate }}
+                  </small>
+                  <small *ngIf="EditformC.edit_device_name.errors.maxlength"
+                    >{{ "HEADER.DEVCHAR" | translate }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Serial Number -->
+
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.SERIALNUMBER" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="edit_serialNumber"
+                  formControlName="edit_serialNumber"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid':
+                      submitted && EditformC.edit_serialNumber.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.SERIALNUMBER' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && EditformC.edit_serialNumber.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.edit_serialNumber.errors.required">{{
+                    "HEADER.SERIALREQ" | translate
+                  }}</span>
+                  <!-- <small *ngIf="EditformC.edit_serialNumber.errors.minlength">Device Name atleast 5 Character </small>
+                  <small *ngIf="EditformC.edit_serialNumber.errors.maxlength">Device Name must not exceed 50 Character </small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comment -->
+
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.COMMENTS" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <textarea
+                  name="edit_comment"
+                  formControlName="edit_comment"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.edit_comment.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.COMMENTS' | translate }}"
+                  class="form-control"
+                >
+                </textarea>
+                <div
+                  *ngIf="submitted && EditformC.edit_comment.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.edit_comment.errors.required">{{
+                    "HEADER.COMMENTSREQ" | translate
+                  }}</span>
+                  <!-- <small *ngIf="EditformC.edit_comment.errors.minlength">Device Name atleast 5 Character </small>
+                          <small *ngIf="EditformC.edit_comment.errors.maxlength">Device Name must not exceed 50 Character </small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RTSP Link Input -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.RTSPLINK" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="edit_rtsp_link"
+                  formControlName="edit_rtsp_link"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.edit_rtsp_link.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.RTSPLINK' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && EditformC.edit_rtsp_link.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.edit_rtsp_link.errors.required">{{
+                    "HEADER.RTSPREQUIRED" | translate
+                  }}</span>
+                  <small *ngIf="EditformC.edit_rtsp_link.errors.minlength"
+                    >{{ "HEADER.RTSPVAL" | translate }}
+                  </small>
+                  <small *ngIf="EditformC.edit_rtsp_link.errors.maxlength"
+                    >{{ "HEADER.RTSPCHAR" | translate }}
+                  </small>
+                  <!-- <small *ngIf="EditformC.edit_rtsp_link.errors.pattern">Enter Valid RTSP link </small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Select Org. -->
+          <div *ngIf="currentLoggedInUser.Role.id == 5" class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.SELECTORGANIZATION" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  bindLabel="name"
+                  bindValue="id"
+                  placeholder="{{ 'HEADER.SELECTORGANIZATION' | translate }}"
+                  formControlName="edit_orgnization_id"
+                  [ngClass]="{
+                    'is-invalid':
+                      submitted && EditformC.edit_orgnization_id.errors
+                  }"
+                >
+                  <ng-option
+                    *ngFor="let item of organizationName"
+                    [value]="item.id"
+                  >
+                    {{ item.name }}
+                  </ng-option>
+                </ng-select>
+                <div
+                  *ngIf="submitted && EditformC.edit_orgnization_id.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.edit_orgnization_id.errors.required">{{
+                    "HEADER.ORGREQUIRED" | translate
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- longitude -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.LONLITUDE" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="longitude"
+                  formControlName="longitude"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.longitude.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.LONLITUDE' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && EditformC.longitude.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.longitude.errors.required">{{
+                    "HEADER.LONLITUDEREQUIRED" | translate
+                  }}</span>
+                  <!-- <small *ngIf="formC.longitude.errors.minlength">{{'HEADER.RTSPVAL'|translate}}</small>
+                            <small *ngIf="formC.longitude.errors.maxlength">{{'HEADER.RTSPCHAR'|translate}}</small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- latitude -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.LATITUDE" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="latitude"
+                  formControlName="latitude"
+                  maxlength="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.latitude.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.LATITUDE' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && EditformC.latitude.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.latitude.errors.required">{{
+                    "HEADER.LATITUDEREQUIRED" | translate
+                  }}</span>
+                  <!-- <small *ngIf="formC.latitude.errors.minlength">{{'HEADER.RTSPVAL'|translate}}</small>
+                            <small *ngIf="formC.latitude.errors.maxlength">{{'HEADER.RTSPCHAR'|translate}}</small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- group ids -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.GROUPSELECT" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  name="edit_group_id"
+                  formControlName="edit_group_id"
+                  [items]="groupName"
+                  [multiple]="true"
+                  [clearable]="false"
+                  bindLabel="name"
+                  placeholder="{{ 'HEADER.GROUPSELECT' | translate }}"
+                >
+                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                    <span class="ng-value-label">
+                      {{ item.name | titlecase }}</span
+                    >
+                    <span
+                      class="ng-value-icon right"
+                      (click)="onGroupRemoveFromDevice(item)"
+                      (click)="clear(item)"
+                      aria-hidden="true"
+                      >×</span
+                    >
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- image -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.ICON" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <label
+                  class="btn btn-sm btn-primary mb-75 mr-75"
+                  for="change-pictures"
+                >
+                  <span class="d-none d-sm-block">{{
+                    "HEADER.CHOOSEFILE" | translate
+                  }}</span>
+
+                  <input
+                    name="device_name"
+                    type="file"
+                    id="change-pictures"
+                    accept=".jpeg, .jpg, .jpe, .png"
+                    hidden
+                    (change)="uploadFiles($event)"
+                    required
+                    placeholder="Logo"
+                    class="form-control"
+                  />
+
+                  <span
+                    *ngIf="submitted && !profile_image"
+                    class="invalid-form"
+                  >
+                  </span>
+                </label>
+
+                <div *ngIf="currentRowId?.icon && !logo" class="form-text">
+                  <span>{{ "HEADER.IMAGESELECTED" | translate }}</span>
+                </div>
+                <div *ngIf="currentRowId.icon && !logo" class="logoo">
+                  <img src="{{ currentRowId.icon | secure | async }}" alt="" />
+                </div>
+                <div *ngIf="logo" class="logoo">
+                  <img src="{{ logo }}" alt="" />
+                </div>
+                <div class="invalid-form">
+                  <small class="form-text">{{
+                    "HEADER.IMAGEINSTRUCTION" | translate
+                  }}</small>
+                </div>
+                <span class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="imageError">{{
+                    "HEADER.IMAGEERROR" | translate
+                  }}</small>
+                </span>
+
+                <div
+                  *ngIf="submitted && !(currentRowId.icon || vehicle_image)"
+                  class="form-text text-danger"
+                >
+                  <span>{{ "HEADER.STDLOGOREQ" | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" rippleEffect>
+          <!-- {{ 'HEADER.ADD' | translate }}   -->
+          {{ "HEADER.SUBMIT" | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel_edit()"
+          rippleEffect
+        >
+          {{ "HEADER.CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-template>
+  <!-- / Edit Stream Device Modal -->
+
+  <!-- Delete Modal -->
+  <ng-template #modalDeletStreamD let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">
+        {{ "HEADER.DELETESTREAMINGDEVICE" | translate }}
+      </h5>
+      <button
+        type="button"
+        class="close"
+        (click)="modal.dismiss('Cross click')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div
+      class="modal-body lh-sm text-wrap text-break"
+      tabindex="0"
+      ngbAutofocus
+    >
+      {{ "HEADER.CONFIRMMSG" | translate }} {{ deviceName | titlecase }}
+      {{ "HEADER.CONFIRMVEHICLEWORD" | translate }}
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="deleteStreamDevice()"
+        rippleEffect
+      >
+        {{ "HEADER.DELETE" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-info"
+        (click)="modal.close('Accept click')"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }}
+      </button>
+    </div>
+  </ng-template>
+  <!-- / Delete Modal -->
+</div>
+
+<!-- <div id="map"></div> -->
+<!-- confirmation modal -->
+<!-- confirmation modal -->
+<ng-template #modalConfirm let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Open stream in new tab</h5>
+    <button
+      type="button"
+      class="close"
+      (click)="modal.dismiss('Cross click')"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body lh-sm text-wrap text-break" tabindex="0" ngbAutofocus>
+    Are you sure you want to open stream?
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="openInNewTab()"
+      rippleEffect
+    >
+      Open
+    </button>
+    <button type="button" class="btn btn-info" (click)="cancel()" rippleEffect>
+      Cancel
+    </button>
+  </div>
+</ng-template>

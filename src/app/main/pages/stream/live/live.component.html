@@ -1,0 +1,73 @@
+<div class="card">
+  <div class="selectGroup mt-2 m-1">
+    <div class="col-md-1 col-1 days ml-2">
+      {{ "HEADER.SELECTGROUP" | translate }} :
+    </div>
+    <div class="col-md-4 col-4">
+      <fieldset class="form-group">
+        <ng-select
+          [items]="user"
+          name="selectedUser"
+          bindLabel="name"
+          [(ngModel)]="selectedGroup"
+          placeholder="{{ 'HEADER.SELECTGRPTOVIEW' | translate }}"
+          (change)="filterByDays($event)"
+          (clear)="clearDropDown()"
+        >
+        </ng-select>
+      </fieldset>
+    </div>
+  </div>
+  <div class="modal-body" tabindex="0">
+    <div class="row">
+      <div class="col-12 selectGroup">
+        <div class="form-group">
+          <h3 style="text-align: center" class="mt-2 mb-2">
+            {{ "HEADER.LIVESTREAM" | translate }}
+          </h3>
+          <div class="">
+            <div class="liveCards">
+              <div
+                class="mb-2 cardDiv"
+                *ngFor="let liveStreams of getLiveStreams"
+              >
+                <div class="cardBgColor">
+                  <div class="" (click)="openVideo(liveStreams.stream_key)">
+                    <div class="col-12 col-sm-12 col-md-12">
+                      <div class="imgbox">
+                        <img
+                          class="imgClass"
+                          style="width: 100px"
+                          [src]="
+                            liveStreams.profile_image
+                              ? liveStreams.profile_image
+                              : ('../../../../../assets/images/avatars/1-small.png'
+                                | secure
+                                | async)
+                          "
+                          alt="Image not available"
+                        />
+                      </div>
+                      <div class="Name">
+                        Name : {{ liveStreams.first_name }}
+                        {{ liveStreams.last_name }}
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 mt-2">
+                      <div>
+                        <p class="name">
+                          {{ liveStreams.first_name }}
+                          {{ liveStreams.last_name }} has started liveStream
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

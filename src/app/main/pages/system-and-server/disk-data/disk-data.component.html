@@ -1,0 +1,56 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <div class="card">
+      <!-- style="height: 80vh;" -->
+      <div class="card-body">
+        <ul ngbNav #navFilled="ngbNav" class="nav-tabs nav-fill">
+          <li ngbNavItem>
+            <a ngbNavLink
+              ><span [data-feather]="'activity'"></span> Active Data</a
+            >
+            <ng-template ngbNavContent>
+              <app-active-data></app-active-data>
+            </ng-template>
+          </li>
+          <li ngbNavItem>
+            <a ngbNavLink>
+              <span [data-feather]="'message-square'"></span>
+              Chat Server</a
+            >
+            <ng-template ngbNavContent>
+              <app-chat-server></app-chat-server>
+            </ng-template>
+          </li>
+          <li ngbNavItem>
+            <a ngbNavLink>
+              <span [data-feather]="'phone-call'"></span>
+              Audio Call Server</a
+            >
+            <ng-template ngbNavContent>
+              <app-audio-call-server></app-audio-call-server>
+            </ng-template>
+          </li>
+          <li ngbNavItem>
+            <a ngbNavLink>
+              <span [data-feather]="'camera'"></span>
+              Streaming Server</a
+            >
+            <ng-template ngbNavContent>
+              <app-streaming-server></app-streaming-server>
+            </ng-template>
+          </li>
+          <li ngbNavItem>
+            <a ngbNavLink>
+              <span [data-feather]="'database'"></span>
+              API Server</a
+            >
+            <ng-template ngbNavContent>
+              <app-api-server></app-api-server>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="navFilled" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>

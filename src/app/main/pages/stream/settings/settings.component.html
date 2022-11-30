@@ -1,0 +1,22 @@
+
+<div class="card">
+    <div class="col-md-12 col-12 m-1">
+        {{ 'HEADER.STREAMRECORDING' | translate }}?
+    </div>
+    <form [formGroup]="SelectDayForm">
+    <div class="selectDays mt-2">
+        <div class="col-md-1 col-1 days ml-2"> {{ 'HEADER.SELECTDAYS' | translate }} :</div>
+        <div class="col-md-3 col-3">
+        <fieldset class="form-group">
+            <ng-select [items]="day" placeholder="{{ 'HEADER.SELECTDAYS' | translate }}" formControlName="selectedDay" bindLabel="title" (change)="filterByDays($event)">
+            </ng-select>
+        </fieldset>
+    </div>
+    </div>
+    
+    <div class="col-12">
+        <button type="submit" (click)="submitSettings()" class="btn btn-primary m-2" rippleEffect>{{ 'HEADER.SUBMIT' | translate }}</button>
+        <button type="reset" (click)="resetSettings()" class="btn btn-outline-secondary mt-2 mb-2" rippleEffect>{{ 'HEADER.CANCEL' | translate }}</button>
+    </div>
+</form>
+</div>

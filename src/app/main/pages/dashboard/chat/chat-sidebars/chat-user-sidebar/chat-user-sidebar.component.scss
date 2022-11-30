@@ -1,0 +1,139 @@
+.cursor {
+  cursor: pointer;
+}
+
+.scrollMembers {
+  // height:58%;
+  max-height: 81%;
+  overflow-y: scroll;
+}
+
+.scrollMembers::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollMembers {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.btn-primary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.chat-user-sidebar {
+  width: 290px;
+  position: relative;
+  .customs-icons {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    li {
+      padding-left: 5px;
+      .feather {
+        width: 15px;
+      }
+    }
+  }
+  .toggle {
+    position: absolute;
+    right: -14px;
+    top: 14px;
+    height: 30px;
+    width: 30px;
+    background: #7367f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(255, 255, 255);
+    border-radius: 50%;
+    box-shadow: 0px 4px 32px rgb(115 103 240 / 15%);
+    z-index: 1;
+    img {
+      transform: rotate(179deg);
+    }
+  }
+  .top-member {
+    font-family: 'Montserrat', Helvetica, Arial, serif;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0px;
+    padding: 20px 20px 0px;
+    color: #babfc7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    // padding-top: 100px;
+    p {
+      color: #7367f0;
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    span {
+      text-align: right;
+      display: block;
+    }
+  }
+  .text {
+    color: #7367f0;
+  }
+  .chal-list {
+    padding: 0px 15px 12px;
+    align-items: center;
+    justify-content: space-between !important;
+    h4 {
+      font-family: 'Montserrat', Helvetica, Arial, serif;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 17px;
+      letter-spacing: 0px;
+      text-align: left;
+      inline-size: 150px;
+      overflow: hidden;
+      display: inline-block;
+      // width: 125px;
+      // white-space: nowrap;
+      height: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .bottom {
+    padding: 10px 10px;
+    position: absolute;
+    bottom: 10px;
+    border-radius: 20px;
+    width: 90%;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+@media only screen and (max-width: 1325px) {
+  .scrollMembers {
+    // height:48%;
+  }
+}
+
+.icon-color {
+  color: #28c76f;
+}
+
+
+.feather-16{
+  width: 16px;
+  height: 16px;
+  }

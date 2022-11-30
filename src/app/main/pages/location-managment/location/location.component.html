@@ -1,0 +1,125 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- users edit start -->
+    <section class="app-user-add ">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+              <!-- select orgnization   Drop down  -->
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <ng-select
+                    bindLabel="name"
+                    (change)="onOrgSelect($event)"
+                    (clear)="onOrgClear()"
+                    placeholder="{{ 'HEADER.SLECTORG' | translate }}"
+                  >
+                    <ng-option
+                      *ngFor="let item of organizationData"
+                      [value]="item.id"
+                    >
+                      {{ item.name }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+            <!-- select group  Drop down  -->
+            <div *ngIf="showGroupDropDown" class="col-sm-2">
+              <div class="form-group">
+                <ng-select
+                  bindLabel="name"
+                  (change)="onGroupSelect($event)"
+                  (clear)="onGroupClear()"
+                  placeholder="{{ 'HEADER.SELECTGROUP' | translate }}"
+                >
+                  <ng-option
+                    *ngFor="let item of groupData"
+                    [value]="item.group_id"
+                  >
+                    {{ item.name }}
+                  </ng-option>
+                </ng-select>
+              </div>
+            </div>
+            <!-- select group, vehicle or ip camera -->
+            <div *ngIf="showSecondDropDown" class="col-sm-2">
+              <div class="form-group">
+                <ng-select
+                  bindLabel="value"
+                  (change)="onUserVehicleIPSelect($event)"
+                  (clear)="onMemberIPVehicleClear()"
+                  placeholder="{{ 'HEADER.SELECTIPMEMBERVEHICLE' | translate }}"
+                >
+                  <ng-option *ngFor="let item of types2" [value]="item.id">
+                    {{ item.value }}
+                  </ng-option>
+                </ng-select>
+              </div>
+            </div>
+            <!-- select user or vehicle -->
+            <div *ngIf="showThirdDropDown" class="col-sm-2">
+              <div class="form-group">
+                <!-- for users -->
+                <ng-container *ngIf="selectUserVehicle === 1">
+                  <ng-select
+                    bindLabel="name"
+                    (change)="onUserSelect($event)"
+                    (clear)="onMemberClear()"
+                    placeholder="{{ 'HEADER.SELECTMEMBER' | translate }}"
+                  >
+                    <ng-option *ngFor="let item of usersData" [value]="item.id">
+                      {{ item.name }}
+                    </ng-option>
+                  </ng-select>
+                </ng-container>
+                <!-- for vehicles -->
+                <ng-container *ngIf="selectUserVehicle === 2">
+                  <ng-select
+                    bindLabel="name"
+                    (change)="onVehicleSelect($event)"
+                    (clear)="onVehicleClear()"
+                    placeholder="{{ 'HEADER.SELECTVEHICLE' | translate }}"
+                  >
+                    <ng-option
+                      *ngFor="let item of vehicleData"
+                      [value]="item.id"
+                    >
+                      {{ item.name }}
+                    </ng-option>
+                  </ng-select>
+                </ng-container>
+                <!-- for IP camera -->
+                <ng-container *ngIf="selectUserVehicle === 3">
+                  <ng-select
+                    bindLabel="name"
+                    [(ngModel)]="defaultIPCamera"
+                    (change)="onIPCameraSelect($event)"
+                    (clear)="onIPCameraClear()"
+                    placeholder="{{ 'HEADER.SELECTIPCAMERA' | translate }}"
+                  >
+                    <ng-option *ngFor="let item of ipCameraData" [value]="item">
+                      {{ item.name }}
+                    </ng-option>
+                  </ng-select>
+                </ng-container>
+              </div>
+            </div>
+            <!-- Date drop down -->
+            <div *ngIf="showDatePicker" class="col-sm-3">
+              <div class="row">
+                <div class="col-sm-12">
+                  <ng2-flatpickr  placeholder="{{ 'HEADER.SELECTDATERANGE' | translate }}" [config]="DateRangeOptions" name="DateRange"></ng2-flatpickr>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Map Component -->
+        <div class="map_container">
+          <app-map [memberLocation]="memberLocationData" [position]="position"></app-map>
+        </div>
+      </div>
+    </section>
+    <!-- users edit ends -->
+  </div>
+</div>

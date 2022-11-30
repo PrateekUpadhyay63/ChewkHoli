@@ -1,0 +1,205 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- App Devices List -->
+    <section class="vehicle-list-wrapper">
+      <div class="card">
+        <ngx-datatable
+          style="padding-top: 50px"
+          [rows]="rows"
+          [rowHeight]="50"
+          class="bootstrap core-bootstrap"
+          [limit]="selectedOption"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+        >
+          <ngx-datatable-column
+            name="{{ 'HEADER.OSTYPE' | translate }}"
+            prop="type"
+            [width]="100"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <span *ngIf="value == 'android'">Andriod</span>
+              <span *ngIf="value == 'ios'">iOS</span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.APPVERSION' | translate }}"
+            prop="app_version"
+            [width]="50"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 12 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.UPDATEDAT' | translate }}"
+            prop="updatedAt"
+            [width]="100"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ACTION' | translate }}"
+            [width]="70"
+            [sortable]="false"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div class="d-flex align-items-center col-actions">
+                <a
+                  class="mr-1"
+                  href="javascript:void(0);"
+                  container="body"
+                  (click)="onEditDeice(editModal, row)"
+                  ><i size="18" data-feather="edit"></i
+                ></a>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </div>
+    </section>
+    <!--/ App device  List -->
+  </div>
+</div>
+
+<!-- Edit App Device Modal -->
+<ng-template #editModal let-modal>
+  <form [formGroup]="editDeviceData" (ngSubmit)="updateDeviceDetails()">
+    <div class="modal-header">
+      <h5
+        *ngIf="isAndroidEdit"
+        class="modal-title modal-primary"
+        id="myModalLabel160"
+      >
+        {{ "HEADER.UPDATEANDROIDFILE" | translate }}
+      </h5>
+      <h5
+        *ngIf="!isAndroidEdit"
+        class="modal-title modal-primary"
+        id="myModalLabel160"
+      >
+        {{ "HEADER.UPDATEIOSFILE" | translate }}
+      </h5>
+      <button type="button" class="close" (click)="cancel()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" tabindex="0">
+      <div class="row">
+        <!-- version -->
+        <div class="col-12">
+          <div class="form-group row">
+            <div class="col-sm-3 col-form-label">
+              <label>{{ "HEADER.VERSION" | translate }}</label>
+            </div>
+            <div class="col-sm-7">
+              <input
+                name="version"
+                formControlName="version"
+                maxlength="8"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && editDeviceFormControl.version.errors
+                }"
+                required
+                type="text"
+                placeholder="{{ 'HEADER.ENTERVERSION' | translate }}"
+                class="form-control"
+              />
+              <div
+                *ngIf="submitted && editDeviceFormControl.version.errors"
+                class="form-text text-danger"
+              >
+                <span *ngIf="editDeviceFormControl.version.errors.required">{{
+                  "HEADER.VERSIONISREQUIRED" | translate
+                }}</span>
+                <small *ngIf="editDeviceFormControl.version.errors.pattern">{{'HEADER.PATTERNERROR' | translate }}</small>
+                <small *ngIf="editDeviceFormControl.version.errors.maxlength"
+                  >{{ 'HEADER.VERSIONMAXLENGTH' | translate }}
+                  </small>
+              </div>
+              <span>Hint: 1.2.0,&nbsp;1.2.44,&nbsp; 1.11.12 </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- app file -->
+        <div class="col-12">
+          <div class="form-group row">
+            <div class="col-sm-3 col-form-label">
+              <label *ngIf="isAndroidEdit">{{
+                "HEADER.UPLOADAPKEFILE" | translate
+              }}</label>
+              <label *ngIf="!isAndroidEdit">{{
+                "HEADER.UPLOADIOSFILE" | translate
+              }}</label>
+            </div>
+            <div class="col-sm-7">
+              <!-- <span class="d-none d-sm-block">choose file</span> -->
+              <div class="custom-file">
+                <input
+                  name="device_file"
+                  formControlName="device_file"
+                  accept="{{ fileFormat }}"
+                  [ngClass]="{
+                    'is-invalid':
+                      submitted && editDeviceFormControl.device_file.errors
+                  }"
+                  (change)="uploadFile($event)"
+                  required
+                  placeholder="{{ 'HEADER.CHOOSEFILE' | translate }}"
+                  type="file"
+                  class="custom-file-input"
+                  id="customFile"
+                />
+                <label
+                  *ngIf="!fileName"
+                  class="custom-file-label"
+                  for="customFile"
+                  >{{ "HEADER.CHOOSEFILE" | translate }}</label
+                >
+                <label
+                  *ngIf="fileName"
+                  class="custom-file-label"
+                  for="customFile"
+                  >{{ fileName }}</label
+                >
+              </div>
+              <span class="invalid-form">
+                <small class="form-text text-danger" *ngIf="fileSizeLimit">{{
+                  "HEADER.FILESIZELIMIT" | translate
+                }}</small>
+              </span>
+              <div
+                *ngIf="submitted && editDeviceFormControl.device_file.errors"
+                class="form-text text-danger"
+              >
+                <span> {{ "HEADER.APPLICATIONFILE" | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" rippleEffect>
+        {{ "HEADER.UPDATE" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="cancel()"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }}
+      </button>
+    </div>
+  </form>
+</ng-template>

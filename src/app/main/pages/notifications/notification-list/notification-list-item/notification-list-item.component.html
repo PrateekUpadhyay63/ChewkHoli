@@ -1,0 +1,100 @@
+<li
+  (click)="onNotificationClicked(email)"
+  class="media"
+  [ngClass]="{
+    'mail-read': email.is_read == false,
+    'selected-row-bg': selected === true
+  }"
+>
+  <div class="media-left pr-50">
+    <div
+      *ngIf="email.sender_data.profile_image != null; else elseTemplate"
+      class="avatar"
+    >
+      <img [src]="email.sender_data.profile_image" alt="avatar img holder" />
+    </div>
+    <ng-template #elseTemplate>
+      <div class="avatar bg-light-primary avatar-lg">
+        {{ email.first_name }}
+        <span class="avatar-content">
+          {{ email.sender_data.first_name | slice: 0:1 | titlecase
+          }}{{ email.sender_data.last_name | slice: 0:1 | titlecase }}
+        </span>
+      </div>
+    </ng-template>
+    <!-- <div class="user-action">
+      <div class="custom-control custom-checkbox">
+        <input
+          type="checkbox"
+          class="custom-control-input"
+          id="customCheck{{ email.id }}"
+          name="customCheck{{ email.id }}"
+          [(ngModel)]="selected"
+          (ngModelChange)="onSelectedChange()"
+          (click)="$event.stopPropagation()"
+        />
+        <label class="custom-control-label" for="customCheck{{ email.id }}"></label>
+      </div>
+    </div> -->
+  </div>
+  <div class="media-body">
+    <div class="mail-details">
+      <div class="mail-items">
+        <h5 class="mb-25">{{ email.title }}</h5>
+        <span class="text-truncate">{{ email.body }}</span>
+      </div>
+      <div class="mail-meta-item">
+        <!-- <ng-container *ngIf="email.attachments.length > 0">
+          <i data-feather="paperclip"></i>
+        </ng-container> -->
+        <!-- <span
+          class="mx-50 bullet bullet-sm"
+          *ngFor="let label of email.labels"
+          [ngClass]="{
+            'bullet-success': label === 'personal',
+            'bullet-primary': label === 'company',
+            'bullet-warning': label === 'important',
+            'bullet-danger': label === 'private'
+          }"
+        ></span> -->
+        <span class="mail-date">{{
+          email.updated_at | customDate | date: "dd/MM/yyyy h:mm"
+        }}</span>
+      </div>
+    </div>
+    <div class="mail-message">
+      <p class="text-truncate mb-0">{{ email.sender_data.name | striphtml }}</p>
+    </div>
+  </div>
+</li>
+
+<!-- confirmation modal -->
+<ng-template #modalConfirm let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Open in new tab</h5>
+    <button
+      type="button"
+      class="close"
+      (click)="modal.dismiss('Cross click')"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body lh-sm text-wrap text-break" tabindex="0" ngbAutofocus>
+    Are you sure you want to open in new Tab
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="openInNewTab()"
+      rippleEffect
+    >
+      Open
+    </button>
+    <button type="button" class="btn btn-info" (click)="cancel()" rippleEffect>
+      Cancel
+    </button>
+  </div>
+</ng-template>

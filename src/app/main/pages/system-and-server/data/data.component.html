@@ -1,0 +1,337 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- User List -->
+    <section class="users-list-wrapper">
+      <div class="card">
+        <div class="row d-flex m-1">
+          <div class="col-md-4 col-4">
+            <div class="input-group search-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder=" {{ 'HEADER.SEARCHBYGROUPNAME' | translate }}"
+                [(ngModel)]="searchValue"
+                (keyup)="onGroupSearch()"
+              />
+              <button
+                type="button"
+                *ngIf="searchValue.length > 0"
+                (click)="onSearchClear()"
+                class="btn bg-transparent onSearch"
+              >
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-4">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="mediaType"
+                name="selectedMedia"
+                bindLabel="id"
+                placeholder=" {{ 'HEADER.SEARCHBYMEDIATYPE' | translate }}"
+                (change)="filterByMedia($event)"
+                (clear)="onFilterClear()"
+              >
+              </ng-select>
+            </fieldset>
+          </div>
+        </div>
+
+        <ngx-datatable
+          [rows]="rows"
+          [rowHeight]="50"
+          class="bootstrap core-bootstrap"
+          [limit]="selectedOption"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+          [count]="page.limit"
+          [offset]="page.offset"
+          [limit]="page.limit"
+        >
+          <ngx-datatable-column
+            name=" {{ 'HEADER.GROUPNAME' | translate }}"
+            prop="name"
+            [width]="120"
+          >
+            <ng-template let-name="value" ngx-datatable-cell-template>
+              <div class="cell-line-height">
+                <span class="font-weight-bold">{{ name | truncate: 15 }} </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name=" {{ 'HEADER.ACTIONS' | translate }}"
+            [width]="60"
+            [sortable]="false"
+            *ngIf="canEditGroup || canDeleteGroup"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div ngbDropdown container="body">
+                <button
+                  ngbDropdownToggle
+                  type="button"
+                  class="btn icon-btn btn-sm hide-arrow"
+                  rippleEffect
+                >
+                  <span
+                    [data-feather]="'more-vertical'"
+                    [class]="'cursor-pointer'"
+                  ></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <a
+                    *ngIf="canViewGroup"
+                    (click)="viewModal(viewMod, row.id)"
+                    ngbDropdownItem
+                  >
+                    <span
+                      [data-feather]="'file-text'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span
+                    >View</a
+                  >
+
+                  <span
+                    *ngIf="canDeleteGroup"
+                    ngbDropdownItem
+                    (click)="deleteModal(modalDanger, row.id, row.name)"
+                    ><span
+                      [data-feather]="'trash'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span
+                    >Delete</span
+                  >
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- <datatable-pager
+          [pagerLeftArrowIcon]="'datatable-icon-left'"
+          [pagerRightArrowIcon]="'datatable-icon-right'"
+          [pagerPreviousIcon]="'datatable-icon-prev'"
+          [pagerNextIcon]="'datatable-icon-skip'"
+          [page]="1"
+          [size]="page.limit"
+          [count]="page.limit"          >
+        </datatable-pager> -->
+        </ngx-datatable>
+
+        <div class="pagination mb-2" *ngIf="rows">
+          <ul class="pager">
+            <i
+              *ngIf="current_page > 1"
+              class="datatable-icon-left"
+              (click)="pagePrev()"
+            ></i>
+            <ng-container *ngFor="let pages of fakeArray; let p = index">
+              <ng-container *ngIf="p + 1 > pageIfy && p + 1 <= pageIfx">
+                <li
+                  class="numbers"
+                  [ngClass]="
+                    p + 1 == current_page ? 'numbers-active' : 'numbers'
+                  "
+                  (click)="pagination(p + 1)"
+                >
+                  {{ p + 1 }} &nbsp;
+                </li>
+              </ng-container>
+            </ng-container>
+            <i
+              *ngIf="current_page < page.count"
+              class="datatable-icon-right"
+              (click)="pageNext()"
+            ></i>
+          </ul>
+        </div>
+        <!-- (pageIfy < (page.count - 5))   -->
+        <!-- <div class="pagination mb-2">
+          <ul class="pager">
+            <i class="datatable-icon-left" (click)="pagePrev()"></i>
+            <li class="numbers" [ngClass]="p+1 == current_page ? 'numbers-active' : 'numbers'"
+            *ngFor="let pages of fakeArray; let p = index" (click)="pagination(p+1)">{{p+1}} &nbsp;</li>
+            <i class="datatable-icon-right" (click)="pageNext()"></i>
+
+          </ul>
+        </div> -->
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<ng-template #modalDanger let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Delete Group</h5>
+    <button
+      type="button"
+      class="close"
+      (click)="modal.dismiss('Cross click')"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body lh-sm text-wrap text-break" tabindex="0" ngbAutofocus>
+    Are you sure you want to delete data from {{ groupName }}?
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-danger"
+      (click)="deleteAttachment()"
+      rippleEffect
+    >
+      Delete
+    </button>
+    <button
+      type="button"
+      class="btn btn-info"
+      (click)="modal.close('Accept click')"
+      rippleEffect
+    >
+      Cancel
+    </button>
+  </div>
+</ng-template>
+<!-- / Delete Modal -->
+
+<ng-template #viewMod let-modal>
+  <div class="modal-header">
+    <!-- <button type="button" class="close closebutton" (click)="cancel()" aria-label="Close"> -->
+    <button type="button" class="close" (click)="cancel()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0">
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <h1 style="text-align: center" class="mt-2 mb-2">{{ groupName }}</h1>
+          <p></p>
+          <div class="">
+            <div class="mb-2" *ngFor="let data of groupData">
+              <div class="card-body cardBgColor">
+                <div class="col-12 flexgrp">
+                  <div
+                    class="messageImageRight"
+                    *ngIf="data.media_type == 'image'"
+                  >
+                    <a [href]="data.attachmentUrl" target="_blank">
+                      <img
+                        style="width: 150px"
+                        [src]="
+                          data.attachmentUrl
+                            ? data.attachmentUrl
+                            : '../../../../../../../assets/images//avatars//user-avatar-image.jpg'
+                        "
+                      />
+                    </a>
+                    <div class="mt-1" style="align-self: center">
+                      <!-- <button class="btn btn-primary " rippleEffect (click)="deleteAttachment(data)">
+                        <i data-feather="plus" class="d-sm-none d-inline-block mr-0 mr-sm-1"></i><span
+                          class="d-none d-sm-inline-block">Delete</span>
+                      </button> -->
+                      <div>
+                        Created At: {{ data.createdAt | date: "short" }}
+                      </div>
+                      <div>Media Type: {{ data.media_type }}</div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="messageImageRight"
+                    *ngIf="data.media_type == 'docs'"
+                  >
+                    <a (click)="downloadPdf(data.attachmentUrl)">
+                      <img
+                        style="width: 150px"
+                        src="../../../../../../assets/download.png"
+                      />
+                    </a>
+                    <div class="mt-1" style="align-self: center">
+                      <!-- <button class="btn btn-primary " rippleEffect (click)="deleteAttachment(data)">
+                        <i data-feather="plus" class="d-sm-none d-inline-block mr-0 mr-sm-1"></i><span
+                          class="d-none d-sm-inline-block">Delete</span>
+                      </button> -->
+                      <div>
+                        Created At: {{ data.createdAt | date: "short" }}
+                      </div>
+                      <div>Media Type: {{ data.media_type }}</div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="messageImageRight"
+                    *ngIf="data.media_type == 'stream'"
+                  >
+                    <a [href]="data.attachmentUrl">
+                      {{ data.attachmentUrl | truncate: 12 }}
+                    </a>
+                    <div class="mt-1" style="align-self: center">
+                      <!-- <button class="btn btn-primary " rippleEffect (click)="deleteAttachment(data)">
+                        <i data-feather="plus" class="d-sm-none d-inline-block mr-0 mr-sm-1"></i><span
+                          class="d-none d-sm-inline-block">Delete</span>
+                      </button> -->
+                      <div>
+                        Created At: {{ data.createdAt | date: "short" }}
+                      </div>
+                      <div>Media Type: {{ data.media_type }}</div>
+                    </div>
+                  </div>
+
+                  <section
+                    class="messageImageRight section"
+                    *ngIf="data.media_type == 'audio'"
+                  >
+                    <audio controls width="150px">
+                      <source [src]="data.attachmentUrl" type="audio/mpeg" />
+                      <source [src]="data.attachmentUrl" type="audio/mp3" />
+                    </audio>
+                    <div class="mt-1" style="align-self: center">
+                      <!-- <button class="btn btn-primary " rippleEffect (click)="deleteAttachment(data)">
+                        <i data-feather="plus" class="d-sm-none d-inline-block mr-0 mr-sm-1"></i><span
+                          class="d-none d-sm-inline-block">Delete</span>
+                      </button> -->
+                      <div>
+                        Created At: {{ data.createdAt | date: "short" }}
+                      </div>
+                      <div>Media Type: {{ data.media_type }}</div>
+                    </div>
+                  </section>
+
+                  <section
+                    class="messageImageRight section"
+                    *ngIf="data.media_type == 'video'"
+                  >
+                    <video width="320" height="150" controls>
+                      <source [src]="data.attachmentUrl" type="video/mp4" />
+                    </video>
+                    <div class="mt-1" style="align-self: center">
+                      <!-- <button class="btn btn-primary " rippleEffect (click)="deleteAttachment(data)">
+                        <i data-feather="plus" class="d-sm-none d-inline-block mr-0 mr-sm-1"></i><span
+                          class="d-none d-sm-inline-block">Delete</span>
+                      </button> -->
+                      <div>
+                        Created At: {{ data.createdAt | date: "short" }}
+                      </div>
+                      <div>Media Type: {{ data.media_type }}</div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer"></div>
+</ng-template>

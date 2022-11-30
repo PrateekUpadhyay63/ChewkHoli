@@ -1,0 +1,72 @@
+<!-- <lib-min-max-popup height="95%" width="55rem"> -->
+<!-- <ng-container *cdkPortal> -->
+  <div class="content-wrapper container-xxl p-0 video-player">
+    <div class="content-body">
+      <div class="card">
+        <div class="card-body">
+          <!-- <button
+          type="reset"
+          class="btn btn-outline-primary"
+          (click)="cancel()"
+          rippleEffect>Back
+        </button> -->
+          <div class="video-wrapper">
+            <video
+              autoplay
+              style="padding-bottom: 10px"
+              #video
+              class="video"
+              (click)="onVideoClick()"
+              (dblclick)="onDoubleClick()"
+            ></video>
+            <!-- <mat-spinner *ngIf="loading" class="spinner" color="accent" strokeWidth="5"></mat-spinner> -->
+            <div *ngIf="loading" class="spinner-border spinner" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <!-- <div class="progress-bar"> -->
+            <label for="customRange3" class="form-label"></label>
+            <input
+              type="range"
+              class="form-range"
+              min="0"
+              [value]="currentProgress"
+              [max]="currentProgress"
+              (input)="onInput($event)"
+              (change)="onChange($event)"
+              step="0.00001"
+              id="customRange3"
+            />
+            <!-- </div> -->
+          </div>
+          <div style="padding-top: 10px" class="video-controls">
+            <div class="controls">
+              <span style="padding-left: 5px" class="icon">
+                <span *ngIf="!isPlaying" (click)="onPauseClicked()">
+                  <i size="25" data-feather="play"></i>
+                </span>
+                <span *ngIf="!isPlayingPushed" (click)="onPlayClick()">
+                  <i size="25" data-feather="pause"></i>
+                </span>
+              </span>
+              <div style="padding-left: 10px">
+                <app-control-volume></app-control-volume>
+              </div>
+              <div style="padding-left: 10px; padding-top: 15px">
+                <app-time
+                  [currentProgress]="currentProgress"
+                  [duration]="duration"
+                ></app-time>
+              </div>
+              <div class="full-screen">
+                <span class="icon" (click)="onFullscreen()">
+                  <i size="18" data-feather="maximize"></i
+                ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- </lib-min-max-popup> -->
+<!-- </ng-container> -->

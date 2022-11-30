@@ -1,0 +1,17 @@
+
+  <ul ngbNav #navFilled="ngbNav" class="nav-tabs nav-fill">
+    <li ngbNavItem>
+        <a ngbNavLink><span [data-feather]="'truck'"></span> {{'HEADER.MODALTITLEV' | translate}}</a>
+      <ng-template ngbNavContent>
+          <app-vechicles-list></app-vechicles-list>
+      </ng-template>
+    </li>
+    <li ngbNavItem>
+      <a ngbNavLink> <span [data-feather]="'video'"></span>{{'HEADER.MODALTITLESD' | translate}}</a>
+      <ng-template ngbNavContent>       
+        <app-streaming-devices-list></app-streaming-devices-list>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="navFilled" class="mt-2"></div>
+    

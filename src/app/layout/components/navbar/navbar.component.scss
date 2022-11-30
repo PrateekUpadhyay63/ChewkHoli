@@ -1,0 +1,90 @@
+@import '@core/scss/base/bootstrap-extended/include'; // Bootstrap includes
+@import '@core/scss/base/components/include'; // Components includes
+
+// To open dd on right
+.dropdown-menu-right {
+  right: 0 !important;
+  left: auto !important;
+}
+
+// Cart Touchspin
+.touchspin-cart {
+  .touchspin-wrapper {
+    width: 6.4rem;
+  }
+  &:focus-within {
+    box-shadow: none !important;
+  }
+}
+
+app-navbar-bookmark {
+  display: flex;
+}
+
+// Apply style on window scroll for navbar static type
+.navbar-static-style-on-scroll {
+  background-color: #fff !important;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 4px 20px 0px !important;
+}
+.read {
+  background-color: #e1e1e1;
+  p {
+    font-weight: 600;
+  }
+  
+}
+.date-1 {
+  font-size: 10px;
+  margin-top: 10px;
+  color: #816c6c;
+  float: right;
+}
+
+// Dark Layout
+.dark-layout {
+  .navbar-container {
+    .search-input {
+      .search-list {
+        li {
+          &.auto-suggestion {
+            &:hover {
+              background-color: $theme-dark-body-bg;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.dropdown-notification .badge {
+
+  animation: blinker 1s linear 10;
+  // -webkit-animation: blink infinite ;
+  // animation: blink infinite ;
+  // animation-duration: 0.5s;
+  // animation-iteration-count: 10;
+  
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+
+.avatar.avatar-lg .avatar-content {
+  width: 40px;
+  height: 40px;
+  font-size: 1.714rem;
+}

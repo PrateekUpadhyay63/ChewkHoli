@@ -1,0 +1,725 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- vehicles List -->
+    <section class="vehicle-list-wrapper">
+      <div class="card">
+        <div class="row d-flex justify-content-between m-1">
+          <div class="col-md-6 col-6">
+            <div class="input-group search-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="{{ 'HEADER.SEARCHVEHICLENAME' | translate }}"
+                [(ngModel)]="searchValue"
+                (keyup)="onVehicleSearch()"
+              />
+              <button
+                type="button"
+                *ngIf="searchValue.length > 0"
+                (click)="onSearchClear()"
+                class="btn bg-transparent onSearch"
+              >
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-3" *ngIf="currentLoggedInUser.Role.id == 5">
+            <ng-select
+              bindLabel="name"
+              bindValue="id"
+              placeholder="{{ 'HEADER.SEARCHORG' | translate }}"
+              (change)="filterOrganization($event)"
+              (clear)="onFilterClear()"
+            >
+              <ng-option
+                *ngFor="let item of organizationData"
+                [value]="item.id"
+              >
+                {{ item.name }}
+              </ng-option>
+            </ng-select>
+          </div>
+
+          <div class="col-md-3 col-3">
+            <button
+              class="btn btn-primary"
+              rippleEffect
+              *ngIf="canAdd"
+              (click)="addNewVehicleDevice(modalAddVehicle)"
+            >
+              <i
+                data-feather="plus"
+                class="d-sm-none d-inline-block mr-0 mr-sm-1"
+              ></i
+              ><span class="d-none d-sm-inline-block">{{
+                "HEADER.ADDNEWVEHICLE" | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+        <ngx-datatable
+          [rows]="rows"
+          [rowHeight]="50"
+          class="bootstrap core-bootstrap"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+          [count]="page.limit"
+          [offset]="page.offset"
+          [limit]="page.limit"
+        >
+          <ngx-datatable-column
+            name="{{ 'HEADER.NAME' | translate }}"
+            prop="name"
+            [width]="100"
+          >
+            <ng-template let-name="value" ngx-datatable-cell-template>
+              <div class="cell-line-height">
+                <span class="font-weight-bold"
+                  >{{ name.length > 6 ? (name | slice: 0:10) + ".." : name }}
+                </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.LOGO' | translate }}"
+            prop="logo"
+            [width]="50"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div class="d-flex align-items-center">
+                <div *ngIf="value != ''; else customAvatar">
+                  <!-- class="rounded-circle mr-1" -->
+                  <img
+                    class="media-left mr-1"
+                    href="javascript:void(0)"
+                    src="{{ value | secure | async }}"
+                    height="40"
+                    width="40"
+                    alt="logo"
+                  />
+                </div>
+
+                <ng-template #customAvatar>
+                  <img
+                    class="rounded-circle mr-1"
+                    src="../../../../../../assets/images/avatars//10-small.png"
+                    height="32"
+                    width="32"
+                    alt="datatable-avatar"
+                  />
+                </ng-template>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.CHASSISNUMBER' | translate }}"
+            prop="chassis_number"
+            [width]="150"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ORGANIZATIONID' | translate }}"
+            prop="Organization.name"
+            [width]="150"
+            *ngIf="currentLoggedInUser.Role.id == 5"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 12 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.UPDATEDAT' | translate }}"
+            prop="updated_at"
+            [width]="150"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ACTIONS' | translate }}"
+            [width]="40"
+            [sortable]="false"
+            *ngIf="canEdit || canDelete"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div class="d-flex align-items-center col-actions">
+                <!-- routerLink="/apps/invoice/preview/{{ row.id }}"  -->
+                <a
+                  class="mr-1"
+                  href="javascript:void(0);"
+                  container="body"
+                  *ngIf="canEdit"
+                  (click)="editVehicle(EditVehicleModal, row)"
+                  ><i size="18" data-feather="edit"></i
+                ></a>
+                <span
+                  class="mr-1"
+                  *ngIf="canDelete"
+                  (click)="deleteVehicleModal(deleteModal, row)"
+                  container="body"
+                  ><i size="18" data-feather="trash-2"></i
+                ></span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+
+        <!-- 3. add if condition  -->
+        <div class="pagination mb-2" *ngIf="rows?.length">
+          <ul class="pager">
+            <i
+              *ngIf="current_page > 1"
+              class="datatable-icon-left"
+              (click)="pagePrev()"
+            ></i>
+            <ng-container *ngFor="let pages of fakeArray; let p = index">
+              <ng-container *ngIf="p + 1 > pageIfy && p + 1 <= pageIfx">
+                <li
+                  class="numbers"
+                  [ngClass]="
+                    p + 1 == current_page ? 'numbers-active' : 'numbers'
+                  "
+                  (click)="pagination(p + 1)"
+                >
+                  {{ p + 1 }} &nbsp;
+                </li>
+              </ng-container>
+            </ng-container>
+            <i
+              *ngIf="current_page < page.count"
+              class="datatable-icon-right"
+              (click)="pageNext()"
+            ></i>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!--/ Vehicles List -->
+  </div>
+
+  <!-- Add Vehicle Modal -->
+  <ng-template #modalAddVehicle let-modal>
+    <form [formGroup]="AddNewVehicle" (ngSubmit)="submitNewVehicleDetails()">
+      <div class="modal-header">
+        <h5 class="modal-title modal-primary" id="myModalLabel160">
+          {{ "HEADER.ADDNEWVEHICLE" | translate }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="cancel()"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0">
+        <div class="row">
+          <!-- Vehicle Name Input-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.NAME" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="vehicle_name"
+                  formControlName="vehicle_name"
+                  maxlength="30"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.vehicle_name.errors
+                  }"
+                  type="text"
+                  placeholder="{{ 'HEADER.NAME' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.vehicle_name.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.vehicle_name.errors.required">{{
+                    "HEADER.VEHICLEREQUIRED" | translate
+                  }}</span>
+                  <small *ngIf="formC.vehicle_name.errors.minlength">{{
+                    "HEADER.VEHICLEVAL" | translate
+                  }}</small>
+                  <small *ngIf="formC.vehicle_name.errors.maxlength"
+                    >{{ "HEADER.VEHICLECHAR" | translate }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Chassis Number Input -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.CHASSISNUMBER" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="chassis_number"
+                  formControlName="chassis_number"
+                  maxlength="17"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.chassis_number.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="{{ 'HEADER.CHASSISNUMBER' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.chassis_number.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.chassis_number.errors.required">{{
+                    "HEADER.CHASSISREQUIRED" | translate
+                  }}</span>
+                  <small *ngIf="formC.chassis_number.errors.minlength">{{
+                    "HEADER.CHASSISVAL" | translate
+                  }}</small>
+                  <small *ngIf="formC.chassis_number.errors.maxlength"
+                    >{{ "HEADER.CHASSISCHAR" | translate }}
+                  </small>
+                  <!-- <small *ngIf="formC.rtsp_link.errors.pattern">Enter Valid RTSP link </small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- organization menu-->
+          <div *ngIf="currentLoggedInUser.Role.id == 5" class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.SELECTORGANIZATION" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  bindLabel="name"
+                  bindValue="id"
+                  placeholder="{{ 'HEADER.SELECTORGANIZATION' | translate }}"
+                  formControlName="organization_id"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.organization_id.errors
+                  }"
+                >
+                  <ng-option
+                    *ngFor="let item of organizationName"
+                    [value]="item.id"
+                  >
+                    {{ item.name }}
+                  </ng-option>
+                </ng-select>
+                <div
+                  *ngIf="submitted && formC.organization_id.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.organization_id.errors.required">{{
+                    "HEADER.ORGREQUIRED" | translate
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- group ids -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.GROUPSELECT" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  name="group_id"
+                  formControlName="group_ids"
+                  [items]="groupName"
+                  [multiple]="true"
+                  bindLabel="name"
+                  bindValue="group_id"
+                  placeholder="{{ 'HEADER.GROUPSELECT' | translate }}"
+                >
+                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                    <span class="ng-value-label">
+                      {{ item.name | titlecase }}</span
+                    >
+                    <span
+                      class="ng-value-icon right"
+                      (click)="clear(item)"
+                      aria-hidden="true"
+                      >×</span
+                    >
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+          <!-- logo Input-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.VEHICLELOGO" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <label
+                  class="btn btn-sm btn-primary mb-75 mr-75"
+                  for="change-picture"
+                >
+                  <span class="d-none d-sm-block">{{
+                    "HEADER.CHOOSEFILE" | translate
+                  }}</span>
+
+                  <input
+                    name="device_name"
+                    type="file"
+                    id="change-picture"
+                    accept=".jpeg, .jpg, .jpe, .png"
+                    hidden
+                    (change)="uploadFiles($event)"
+                    required
+                    placeholder="{{ 'HEADER.VEHICLELOGO' | translate }}"
+                    class="form-control"
+                  />
+                  <span
+                    *ngIf="submitted && !profile_image"
+                    class="invalid-form"
+                  >
+                  </span>
+                </label>
+
+                <div *ngIf="vehicle_image" class="image_vehicle">
+                  <img style="width: 200px" src="{{ vehicle_image }}" alt="" />
+                </div>
+                <div class="invalid-form">
+                  <small class="form-text">{{
+                    "HEADER.IMAGEINSTRUCTION" | translate
+                  }}</small>
+                </div>
+                <span class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="imageError">{{
+                    "HEADER.IMAGEERROR" | translate
+                  }}</small>
+                </span>
+                <div
+                  *ngIf="submitted && !uploadProfileImage"
+                  class="form-text text-danger"
+                >
+                  <span>{{ "HEADER.VEHICLELOGOREQ" | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" rippleEffect>
+          <!-- {{ 'HEADER.ADD' | translate }}   -->
+          {{ "HEADER.SUBMIT" | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel()"
+          rippleEffect
+        >
+          {{ "HEADER.CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-template>
+  <!-- / Add Vehicle Modal -->
+
+  <!-- Edit Vehicle Modal -->
+  <ng-template #EditVehicleModal let-modal>
+    <form [formGroup]="EditVehicle" (ngSubmit)="OnEditVehicleData()">
+      <div class="modal-header">
+        <h5 class="modal-title modal-primary" id="myModalLabel160">
+          {{ "HEADER.EDITVEHICLE" | translate }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="cancelEdit()"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0">
+        <div class="row">
+          <!-- Vehicle Name Input-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.VEHICLENAME" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="vehicle_name"
+                  formControlName="vehicle_name"
+                  maxlength="30"
+                  [ngClass]="{
+                    'is-invalid': submitted && formEdit.vehicle_name.errors
+                  }"
+                  type="text"
+                  placeholder="Vehicle Name"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formEdit.vehicle_name.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formEdit.vehicle_name.errors.required">{{
+                    "HEADER.VEHICLEREQUIRED" | translate
+                  }}</span>
+                  <small *ngIf="formEdit.vehicle_name.errors.minlength"
+                    >{{ "HEADER.VEHICLEVAL" | translate }}
+                  </small>
+                  <small *ngIf="formEdit.vehicle_name.errors.maxlength"
+                    >{{ "HEADER.VEHICLECHAR" | translate }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Chassis Number Input -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.CHASSISNUMBER" | translate }} </label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="chassis_number"
+                  formControlName="chassis_number"
+                  maxlength="17"
+                  [ngClass]="{
+                    'is-invalid': submitted && formEdit.chassis_number.errors
+                  }"
+                  required
+                  type="text"
+                  placeholder="Chassis Number"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formEdit.chassis_number.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formEdit.chassis_number.errors.required">{{
+                    "HEADER.CHASSISREQUIRED" | translate
+                  }}</span>
+                  <small *ngIf="formEdit.chassis_number.errors.minlength"
+                    >{{ "HEADER.CHASSISVAL" | translate }}
+                  </small>
+                  <small *ngIf="formEdit.chassis_number.errors.maxlength"
+                    >{{ "HEADER.CHASSISCHAR" | translate }}
+                  </small>
+                  <!-- <small *ngIf="formC.rtsp_link.errors.pattern">Enter Valid RTSP link </small> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- organization menu-->
+          <div *ngIf="currentLoggedInUser.Role.id == 5" class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.SELECTORGANIZATION" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  bindLabel="name"
+                  bindValue="id"
+                  placeholder="Select Organization"
+                  formControlName="organization_id"
+                  [ngClass]="{
+                    'is-invalid': submitted && formEdit.organization_id.errors
+                  }"
+                >
+                  <ng-option
+                    *ngFor="let item of organizationName"
+                    [value]="item.id"
+                  >
+                    {{ item.name }}
+                  </ng-option>
+                </ng-select>
+                <div
+                  *ngIf="submitted && formEdit.organization_id.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formEdit.organization_id.errors.required">{{
+                    "HEADER.ORGREQUIRED" | translate
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- edit_group ids -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.GROUPSELECT" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  name="edit_group_id"
+                  formControlName="edit_group_id"
+                  [items]="groupName"
+                  [multiple]="true"
+                  [clearable]="false"
+                  bindLabel="name"
+                  placeholder="{{ 'HEADER.GROUPSELECT' | translate }}"
+                >
+                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                    <span class="ng-value-label">
+                      {{ item.name | titlecase }}</span
+                    >
+                    <span
+                      class="ng-value-icon right"
+                      (click)="onGroupRemoveFromVehicle(item)"
+                      (click)="clear(item)"
+                      aria-hidden="true"
+                      >×</span
+                    >
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- logo Input-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.VEHICLELOGO" | translate }}</label>
+              </div>
+              <div class="col-sm-7">
+                <label
+                  class="btn btn-sm btn-primary mb-75 mr-75"
+                  for="change-pictures"
+                >
+                  <span class="d-none d-sm-block">{{
+                    "HEADER.CHOOSEFILE" | translate
+                  }}</span>
+
+                  <input
+                    name="device_name"
+                    type="file"
+                    id="change-pictures"
+                    accept=".jpeg, .jpg, .jpe, .png"
+                    hidden
+                    (change)="uploadFiles($event)"
+                    required
+                    placeholder="Logo"
+                    class="form-control"
+                  />
+                </label>
+                <div
+                  *ngIf="currentRowId?.logo && !vehicle_image"
+                  class="form-text"
+                >
+                  <span>{{ "HEADER.IMAGESELECTED" | translate }}</span>
+                </div>
+                <div
+                  *ngIf="currentRowId.logo && !vehicle_image"
+                  class="image_vehicle"
+                >
+                  <img
+                    style="width: 200px"
+                    src="{{ currentRowId.logo | secure | async }}"
+                    alt=""
+                  />
+                </div>
+                <div *ngIf="vehicle_image" class="image_vehicle">
+                  <img style="width: 200px" src="{{ vehicle_image }}" alt="" />
+                </div>
+                <div class="invalid-form">
+                  <small class="form-text">{{
+                    "HEADER.IMAGEINSTRUCTION" | translate
+                  }}</small>
+                </div>
+                <span class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="imageError">{{
+                    "HEADER.IMAGEERROR" | translate
+                  }}</small>
+                </span>
+                <div
+                  *ngIf="submitted && !(currentRowId.logo || vehicle_image)"
+                  class="form-text text-danger"
+                >
+                  <span>{{ "HEADER.VEHICLELOGOREQ" | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" rippleEffect>
+          {{ "HEADER.SUBMIT" | translate }}
+          <!-- {{ 'HEADER.ADD' | translate }}   -->
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancelEdit()"
+          rippleEffect
+        >
+          {{ "HEADER.CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-template>
+  <!-- / Edit Stream Device Modal -->
+
+  <!-- Delete Modal -->
+  <ng-template #deleteModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">
+        {{ "HEADER.DELETEVEHICLE" | translate }}
+      </h5>
+      <button
+        type="button"
+        class="close"
+        (click)="modal.dismiss('Cross click')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body lh-sm" tabindex="0" ngbAutofocus>
+      {{ "HEADER.CONFIRMMSG" | translate }} {{ vehicleName | titlecase }}
+      {{ "HEADER.CONFIRMVEHICLEWORD" | translate }}
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="onDeleteVehicle()"
+        rippleEffect
+      >
+        {{ "HEADER.DELETE" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-info"
+        (click)="modal.close('Accept click')"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }}
+      </button>
+    </div>
+  </ng-template>
+  <!-- / Delete Modal -->
+</div>

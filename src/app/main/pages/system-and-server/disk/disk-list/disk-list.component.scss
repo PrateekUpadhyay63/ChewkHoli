@@ -1,0 +1,70 @@
+@import '@core/scss/base/bootstrap-extended/_include'; // Components includes
+
+.vehicle-list-wrapper {
+    .col-actions {
+      span {
+        &:not(.dropdown-item) {
+          color: $danger;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+
+.ngx-datatable.material .datatable-footer { 
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 16px;
+  }
+
+  .pagination {
+      justify-content: end;
+  }
+
+.pagination .pager{
+  background-color: #f3f2f7;
+  border-top-left-radius: 28px;
+  border-bottom-left-radius: 28px;
+  border-top-right-radius: 28px;
+  border-bottom-right-radius: 28px;
+  height: 36px;
+  display: flex;
+  padding: 0px ;
+  margin-right: 10px;
+  align-items: center;
+}
+.pagination ul li {
+  list-style: none;
+  cursor: pointer;
+}
+.numbers{
+  padding: 4px 5px 4px 16px;
+  line-height: 26px;
+  text-align: center;
+}
+
+.pagination ul li.ng-star-inserted.numbers.numbers-active {
+  background-color: #7367f0 !important;
+  color: #fff !important;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+}
+.pagination i.datatable-icon-left {
+  margin-left: 9px;
+  margin-right: 2px;
+  margin-top: 3px;
+  cursor: pointer;
+  font-size: 20px;
+  caret-color: transparent;
+}
+
+.pagination i.datatable-icon-right {
+  margin-right: 9px;
+  margin-top: 3px;
+  cursor: pointer;
+  font-size: 20px;
+  caret-color: transparent;
+}
+

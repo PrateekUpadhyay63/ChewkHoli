@@ -1,0 +1,586 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- vehicles List -->
+    <section class="vehicle-list-wrapper">
+      <div class="card">
+        <div class="row d-flex justify-content-between m-1">
+          <div class="col-md-9 col-9">
+            <div class="input-group search-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder=" {{ 'HEADER.SELECTORGANIZATIONNAME' | translate }}"
+                [(ngModel)]="searchValue"
+                (keyup)="onDiskListSearch()"
+              />
+              <button
+                type="button"
+                *ngIf="searchValue.length > 0"
+                (click)="onSearchClear()"
+                class="btn bg-transparent onSearch"
+              >
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-3 col-3" *ngIf="this.canAddUser">
+            <button
+              class="btn btn-primary"
+              rippleEffect
+              (click)="addNewDiskSpace(modalAddDisk)"
+            >
+              <i
+                data-feather="plus"
+                class="d-sm-none d-inline-block mr-0 mr-sm-1"
+              ></i
+              ><span class="d-none d-sm-inline-block">{{
+                "HEADER.ADDDISKSPACE" | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+        <ngx-datatable
+          [rows]="rows"
+          [rowHeight]="50"
+          class="bootstrap core-bootstrap"
+          [limit]="selectedOption"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+        >
+          <ngx-datatable-column
+            name="{{ 'HEADER.SELECTORGANIZATIONNAME' | translate }}"
+            prop="Organization.name"
+            [width]="120"
+          >
+            <ng-template let-name="value" ngx-datatable-cell-template>
+              <div class="cell-line-height">
+                <span class="font-weight-bold">{{ name | truncate: 15 }} </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.TOTALSPACE' | translate }}"
+            prop="total_space"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value }}GB
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.USEDSPACE' | translate }}"
+            prop="used_space"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value }}GB
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.AVAILABLESPACE' | translate }}"
+            prop="available_space"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value }}GB
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.CREATEDAT' | translate }}"
+            prop="createdAt"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.UPDATEDAT' | translate }}"
+            prop="UPDATED AT"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.ACTIONS' | translate }}"
+            [width]="40"
+            [sortable]="false"
+            *ngIf="canViewUser || canEditUser || canDeleteUser"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div class="d-flex align-items-center col-actions">
+                <a
+                  class="mr-1"
+                  href="javascript:void(0);"
+                  container="body"
+                  (click)="editDiskModalOpen(EditDiskModal, row)"
+                  ><i size="18" data-feather="edit"></i
+                ></a>
+                <span
+                  class="mr-1"
+                  (click)="deleteDiskSpaceModal(modalDeleDiskSpace, row)"
+                  container="body"
+                  ><i size="18" data-feather="trash-2"></i
+                ></span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="1"
+            [size]="page.limit"
+            [count]="page.limit"
+          >
+          </datatable-pager>
+        </ngx-datatable>
+        <div class="pagination mb-2" *ngIf="rows.length">
+          <ul class="pager">
+            <i
+              *ngIf="onBackIcon"
+              class="datatable-icon-left"
+              (click)="pagePrev()"
+            ></i>
+            <ng-container *ngFor="let pages of fakeArray; let p = index">
+              <ng-container
+                *ngIf="p + 1 >= current_page - 2 && p + 1 <= current_page + 2"
+              >
+                <li
+                  class="numbers"
+                  [ngClass]="
+                    p + 1 == current_page ? 'numbers-active' : 'numbers'
+                  "
+                  (click)="pagination(p + 1)"
+                >
+                  {{ p + 1 }} &nbsp;
+                </li>
+              </ng-container>
+            </ng-container>
+            <i
+              *ngIf="onForwardIcon"
+              class="datatable-icon-right"
+              (click)="pageNext()"
+            ></i>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!--/ streaming device  List -->
+  </div>
+
+  <!-- Add Stream Device Modal -->
+  <ng-template #modalAddDisk let-modal>
+    <form [formGroup]="addDiskSpaceForm" (ngSubmit)="onAddNewDispSpaceSubmit()">
+      <div class="modal-header">
+        <h5 class="modal-title modal-primary" id="myModalLabel160">
+          {{ "HEADER.ADDNEWDISKSPACE" | translate }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="modal.dismiss('Cross click')"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0">
+        <div class="row">
+          <!-- Select Org.  *ngIf="currentLoggedInUser.Role.id == 5"-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label
+                  >{{ "HEADER.SELECTORGANIZATIONNAME" | translate }}:
+                </label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  bindLabel="name"
+                  bindValue="id"
+                  placeholder="{{
+                    'HEADER.SELECTORGANIZATIONNAME' | translate
+                  }}"
+                  formControlName="organization_id"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.organization_id.errors
+                  }"
+                >
+                  <ng-option
+                    *ngFor="let item of organizationName"
+                    [value]="item.id"
+                  >
+                    {{ item.name }}
+                  </ng-option>
+                </ng-select>
+                <div
+                  *ngIf="submitted && formC.organization_id.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.organization_id.errors.required"
+                    >Organization is required!</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Name Input-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.TOTALSPACE" | translate }}: </label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="total_space"
+                  (change)="totalSpaceChange($event)"
+                  formControlName="total_space"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.total_space.errors
+                  }"
+                  required
+                  type="number"
+                  placeholder="{{ 'HEADER.TOTALSPACE' | translate }}"
+                  class="form-control"
+                />
+                <div class="form-text text-danger">
+                  <span *ngIf="tottalSpaceError"
+                    >Total Space should be greater then 0</span
+                  >
+                </div>
+                <div
+                  *ngIf="submitted && formC.total_space.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.total_space.errors.required"
+                    >Total Space is required!</span
+                  >
+                  <span *ngIf="formC.total_space.errors.min"
+                    >Total Space should be postive number
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Used Space Input -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.USEDSPACE" | translate }}: </label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="used_space"
+                  formControlName="used_space"
+                  (change)="usedSpaceChange($event)"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.used_space.errors
+                  }"
+                  required
+                  type="number"
+                  placeholder="{{ 'HEADER.USEDSPACE' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.used_space.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.used_space.errors.required"
+                    >Used Space is required!</span
+                  >
+                  <span *ngIf="formC.used_space.errors.min"
+                    >Used Space should be postive number
+                  </span>
+                  <span *ngIf="formC.used_space.errors.mustMatch"
+                    >Used space Should be less then total space!</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Available Space Input -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.AVAILABLESPACE" | translate }}: </label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="available_space"
+                  formControlName="available_space"
+                  [ngClass]="{
+                    'is-invalid': submitted && formC.available_space.errors
+                  }"
+                  value="{{this.addDiskSpaceForm.value.total_space - this.addDiskSpaceForm.value.used_space}}"
+                  required
+                  readonly
+                  type="number"
+                  placeholder="{{ 'HEADER.AVAILABLESPACE' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && formC.available_space.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="formC.available_space.errors.required"
+                    >Available Space is required!</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" rippleEffect>
+          <!-- {{ 'HEADER.ADD' | translate }}   -->
+          {{ "HEADER.SUBMIT" | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="modal.close('Accept click')"
+          rippleEffect
+        >
+          {{ "HEADER.CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-template>
+  <!-- / Add Stream Device Modal -->
+
+  <!-- Edit Stream Device Modal -->
+  <ng-template #EditDiskModal let-modal>
+    <form [formGroup]="editDiskSpaceForm" (ngSubmit)="onEditDispSpaceSubmit()">
+      <div class="modal-header">
+        <h5 class="modal-title modal-primary" id="myModalLabel160">
+          {{ "HEADER.ADDNEWDISKSPACE" | translate }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="modal.dismiss('Cross click')"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0">
+        <div class="row">
+          <!-- Select Org.  *ngIf="currentLoggedInUser.Role.id == 5"-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label
+                  >{{ "HEADER.SELECTORGANIZATIONNAME" | translate }}:
+                </label>
+              </div>
+              <div class="col-sm-7">
+                <ng-select
+                  bindLabel="name"
+                  bindValue="id"
+                  placeholder="{{
+                    'HEADER.SELECTORGANIZATIONNAME' | translate
+                  }}"
+                  formControlName="organization_id"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.organization_id.errors
+                  }"
+                >
+                  <ng-option
+                    *ngFor="let item of organizationName"
+                    [value]="item.id"
+                  >
+                    {{ item.name }}
+                  </ng-option>
+                </ng-select>
+                <div
+                  *ngIf="submitted && EditformC.organization_id.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.organization_id.errors.required"
+                    >Organization is required!</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Name Input-->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.TOTALSPACE" | translate }}: </label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  (change)="totalSpaceChange($event)"
+                  name="total_space"
+                  formControlName="total_space"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.total_space.errors
+                  }"
+                  required
+                  type="number"
+                  placeholder="{{ 'HEADER.TOTALSPACE' | translate }}"
+                  class="form-control"
+                />
+                <div class="form-text text-danger">
+                  <span *ngIf="tottalSpaceError"
+                    >Total Space should be greater then 0</span
+                  >
+                </div>
+                <div
+                  *ngIf="submitted && EditformC.total_space.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.total_space.errors.required"
+                    >Total Space is required!</span
+                  >
+                  <span *ngIf="EditformC.total_space.errors.min"
+                    >Total Space should be postive number
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Used Space Input -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.USEDSPACE" | translate }}: </label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  (change)="usedSpaceChange($event)"
+                  name="used_space"
+                  formControlName="used_space"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.used_space.errors
+                  }"
+                  required
+                  type="number"
+                  placeholder="{{ 'HEADER.USEDSPACE' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && EditformC.used_space.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.used_space.errors.required"
+                    >Used Space is required!</span
+                  >
+                  <span *ngIf="EditformC.used_space.errors.min"
+                    >Used Space should be postive number
+                  </span>
+                  <span *ngIf="EditformC.used_space.errors.mustMatch"
+                    >Used Space Should be less then total space!</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Available Space Input -->
+          <div class="col-12">
+            <div class="form-group row">
+              <div class="col-sm-3 col-form-label">
+                <label>{{ "HEADER.AVAILABLESPACE" | translate }}: </label>
+              </div>
+              <div class="col-sm-7">
+                <input
+                  name="available_space"
+                  readonly
+                  formControlName="available_space"
+                  [ngClass]="{
+                    'is-invalid': submitted && EditformC.available_space.errors
+                  }"
+                  required
+                  type="number"
+                  placeholder="{{ 'HEADER.AVAILABLESPACE' | translate }}"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="submitted && EditformC.available_space.errors"
+                  class="form-text text-danger"
+                >
+                  <span *ngIf="EditformC.available_space.errors.required"
+                    >Available Space is required!</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" rippleEffect>
+          <!-- {{ 'HEADER.ADD' | translate }}   -->
+          {{ "HEADER.SUBMIT" | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="modal.close('Accept click')"
+          rippleEffect
+        >
+          {{ "HEADER.CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-template>
+  <!-- / Edit Stream Device Modal -->
+
+  <!-- Delete Modal -->
+  <ng-template #modalDeleDiskSpace let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">
+        {{ "HEADER.DELETEDISKSPACE" | translate }}
+      </h5>
+      <button
+        type="button"
+        class="close"
+        (click)="modal.dismiss('Cross click')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div
+      class="modal-body lh-sm text-wrap text-break"
+      tabindex="0"
+      ngbAutofocus
+    >
+      {{ "HEADER.SURESENTENCE" | translate }}{{ currentRowOrgName | titlecase
+      }}{{ "HEADER.SUBSENTENCE" | translate }}?
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="deleteDiskSpace()"
+        rippleEffect
+      >
+        {{ "HEADER.DELETE" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-info"
+        (click)="modal.close('Accept click')"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }}
+      </button>
+    </div>
+  </ng-template>
+  <!-- / Delete Modal -->
+</div>

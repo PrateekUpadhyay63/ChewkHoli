@@ -1,0 +1,53 @@
+<!-- <div class="modal-header">
+    <h4 class="modal-title">Incoming Call</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">X</button>
+  </div> -->
+<div class="container"></div>
+<div class="modal-body">
+  <div class="center">
+    <span class="avatar">
+      <ng-container
+        *ngIf="callData.sender_profile_image != 'null'; else elseTemplate"
+      >
+        <img
+          class="round"
+          [src]="callData.sender_profile_image"
+          alt="avatar"
+          height="80"
+          width="80"
+        />
+      </ng-container>
+    </span>
+  </div>
+  <ng-template #elseTemplate>
+    <div class="avatar bg-light-primary avatar-xl">
+      <span class="avatar-content"
+        >{{callData.sender_first_name | slice:0:1
+        |titlecase}}{{callData.sender_last_name |slice:0:1 |titlecase}}</span
+      >
+    </div>
+    <!-- <div style="height: 80px;width: 80px;" class="avatar bg-light-primary avatar-lg">
+          <span style="text-align: center;" > {{callData.sender_first_name | slice:0:1 |titlecase}}{{callData.sender_last_name |slice:0:1 |titlecase}} </span>
+        </div> -->
+  </ng-template>
+  <div>
+    <p class="center">
+      <strong> <h4>{{callData.name}}</h4> </strong>
+    </p>
+    <p class="center">Incoming call from {{callData.sender_Name}}</p>
+    <div style="text-align: center">
+      <img
+        class="icon"
+        (click)="joinConferenceCall()"
+        src="../../../../../../assets/images/conference/callanswer.png"
+        alt="call-answer"
+      />
+      <img
+        class="icon"
+        (click)="rejectConfernceCall()"
+        src="../../../../../../assets/images/conference/close .png"
+        alt="call-reject"
+      />
+    </div>
+  </div>
+</div>

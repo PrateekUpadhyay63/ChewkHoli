@@ -1,0 +1,17 @@
+version: "3"
+services:
+  dubai_police_dev-admin:
+    container_name: 1dubai_police_dev-admin
+#    restart: always
+    build: .
+    #    command: bash -c "./script.sh"
+    networks:
+       - dubai_police_dev-admin
+    volumes:
+    - ./:/var/www/html/
+    ports:
+       - "8087:80"
+#Docker Networks
+networks:
+  dubai_police_dev-admin:
+    driver: bridge

@@ -1,0 +1,94 @@
+.text-pin {
+  padding-right: 10px;
+}
+
+.pin-drop-btn {
+  padding-top: 10px;
+}
+.mapDiv {
+  .maplibregl-ctrl {
+    margin-right: 30px;
+    display: flex;
+    &.mapboxgl-ctrl-attrib {
+      display: none;
+    }
+  }
+  .mapboxgl-ctrl-bottom-right, .maplibregl-ctrl-bottom-right {
+    bottom: 0;
+    right: 50% !important;
+  }
+}
+.add-fullscreen {
+  padding-top: 10px;
+  .max-height {
+    height: calc( var(--vh, 1vh)  *100 - calc(calc(2rem * 1) + 0.2rem + 0.35rem + 1.3rem + 0rem) );
+
+
+
+    // height: calc( var(--vh, 1vh) * 100 - calc(calc(3rem * 1) + 3rem) );
+    // height: calc(
+    //   var(--vh, 1vh) * 100 - calc(calc(1rem * 1) + 1rem)
+    // ); /* change when header is removed. */
+
+    .chats {
+      // height: calc( var(--vh, 1vh) * 100 - calc(calc(3rem * 1) + 3rem) );
+      // height: calc(
+      //   var(--vh, 1vh) * 100 - calc(calc(1rem * 1) + 1rem)
+      // ); /* change when header is removed. */
+      .scrollMembers {
+        height: 95vh;
+      }
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: 0.357rem;
+  justify-content: end;
+}
+
+.pagination .pager {
+  background-color: #f3f2f7;
+  border-top-left-radius: 28px;
+  border-bottom-left-radius: 28px;
+  border-top-right-radius: 28px;
+  border-bottom-right-radius: 28px;
+  height: 36px;
+  display: flex;
+  padding: 0px;
+  margin-right: 10px;
+  align-items: center;
+  justify-content: end;
+}
+.pagination ul li {
+  list-style: none;
+  cursor: pointer;
+}
+.numbers {
+  padding: 5px 5px 5px 17px;
+  line-height: 26px;
+  text-align: center;
+}
+
+.pagination ul li.ng-star-inserted.numbers.numbers-active {
+  background-color: #7367f0 !important;
+  color: #fff !important;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+}
+.pagination i.datatable-icon-left {
+  margin-left: 9px;
+  margin-right: 2px;
+  margin-top: 3px;
+  cursor: pointer;
+}
+.pagination i.datatable-icon-right {
+  margin-right: 9px;
+  margin-top: 3px;
+  cursor: pointer;
+}

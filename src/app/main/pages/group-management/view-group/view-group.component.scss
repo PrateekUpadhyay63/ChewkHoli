@@ -1,0 +1,23 @@
+// to make ng-select read-only
+//  .ng-select.disable-arrow .ng-arrow-wrapper .ng-arrow {
+//     display: none;
+//   }
+
+// .ng-select.disable-dropdown ng-dropdown-panel {
+//     display: none;
+//   }
+
+//   .ng-select.disable-clear-all .ng-clear-wrapper {
+//     display: none;
+//   }
+
+// change ng-select container color.
+// .ng-select.ng-select-disabled>.ng-select-container {
+//     background-color: red;
+// }
+
+.ng-value-label{
+    inline-size: 8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

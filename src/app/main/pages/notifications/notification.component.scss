@@ -1,0 +1,116 @@
+@import '@core/scss/base/pages/app-email';
+@import '@core/scss/angular/libs/select.component';
+@import '@core/scss/angular/libs/quill-editor.component';
+@import '@core/scss/base/components/_include'; // Components includes
+
+// Email Application
+
+// .email-application .email-app-list {
+//   // display: grid;
+// }
+.scroll {
+  max-height: 60vh;
+}
+.email-application {
+  //  ng Select
+  .ng-select {
+    .ng-select-container {
+      border: none;
+    }
+  }
+  //  quill editor
+  .ql-container {
+    .ql-snow {
+      border: none;
+    }
+  }
+  .modal {
+    animation: none !important;
+  }
+
+  .email-app-list {
+    height: 100% !important;
+  }
+
+  .email-media-list {
+    email-list-item {
+      &:not(:first-child) {
+        li {
+          border-top: 1px solid $border-color;
+        }
+      }
+    }
+  }
+
+  input {
+    &[type='checkbox'] {
+      z-index: 1;
+    }
+  }
+
+  .compose-mail-form-field {
+    .form-group {
+      margin-bottom: 0;
+    }
+    .ng-select-focused {
+      box-shadow: none;
+    }
+  }
+}
+
+// Dark Layout
+.dark-layout {
+  .ng-select-container {
+    background-color: $theme-dark-input-bg;
+  }
+}
+.pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: 0.357rem;
+  justify-content: end;
+}
+
+.pagination .pager{
+  background-color: #f3f2f7;
+  border-top-left-radius: 28px;
+  border-bottom-left-radius: 28px;
+  border-top-right-radius: 28px;
+  border-bottom-right-radius: 28px;
+  height: 36px;
+  display:flex;
+  padding: 0px ;
+  margin-right: 10px;
+  align-items: center;
+  justify-content: end;
+}
+.pagination ul li {
+  list-style: none;
+  cursor: pointer;
+}
+.numbers{
+  padding: 5px 5px 5px 17px;
+  line-height: 26px;
+  text-align: center;
+}
+
+.pagination ul li.ng-star-inserted.numbers.numbers-active {
+  background-color: #7367f0 !important;
+  color: #fff !important;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+}
+.pagination i.datatable-icon-left {
+  margin-left: 9px;
+  margin-right: 2px;
+  margin-top: 3px;
+  cursor: pointer;
+}
+.pagination i.datatable-icon-right {
+  margin-right: 9px;
+  margin-top: 3px;
+  cursor: pointer;
+}

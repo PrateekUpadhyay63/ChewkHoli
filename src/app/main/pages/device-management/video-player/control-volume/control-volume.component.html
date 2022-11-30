@@ -1,0 +1,32 @@
+<div class="volume-control">
+  <!-- <app-control class="icon" [icon]="icon" [title]="title" (click)="onVolumeClick()"></app-control> -->
+  <!-- <span class="icon" (click)="onVolumeClick()"> 
+   <span *ngIf="mute == 0"> <i size="25" data-feather="volume-2" ></i></span>
+   <span *ngIf="notMute > 1"> <i size="25" data-feather="volume-x" ></i></span>
+   </span> -->
+   <span class="icon" *ngIf="mute" (click)="onVolumeClick()"> <i size="25" data-feather="volume-2" ></i>
+   </span>
+    <span *ngIf="notMute" (click)="onVolumeClick()"> <i size="25" data-feather="volume-x" ></i></span>
+ 
+  <div  class="bar">
+    <label for="customRange3" class="form-label"></label>
+    <input type="range"
+     class="form-range" 
+     min="0"
+     [value]="volume"
+     [max]="maxVolumeValue"
+     (input)="inputHandler($event)"
+     (change)="changeHandler($event)"
+     step="0.00001" 
+     id="customRange3">
+  </div>
+ 
+  <!-- <app-progress-bar
+    class="bar"
+    [max]="maxVolumeValue"
+    [value]="volume"
+    [label]="ariaLabel"
+    (input)="onInput($event)"
+    tabindex="0"
+  ></app-progress-bar> -->
+</div>

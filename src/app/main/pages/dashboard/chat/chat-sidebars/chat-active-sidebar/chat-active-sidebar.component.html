@@ -1,0 +1,1111 @@
+<!-- User Chat profile right area -->
+<section class="chat-app-window">
+  <div class="start-chat-area custom-chat">
+    <div class="toggle cursor" (click)="toggleSidebar('chat-active-sidebar')">
+      <div class="icon-wrapper">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-arrow-right"
+        >
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="messages" #scrollMe>
+      <div class="groupname">
+        <!-- Group image -->
+        <div *ngIf="selectedGroup.image != null && selectedGroup.image != '';else groupImage ">
+          <span class="grp-avatar">
+            <img
+              src="{{selectedGroup.image | secure |async}}"
+              height="42"
+              width="42"
+              alt="image"
+            />
+          </span>
+        </div>
+        <ng-template #groupImage>
+          <span class="avatar">
+            <img
+              src="../../../../../../../assets//images/avatars/user-avatar-image.jpg"
+              height="42"
+              width="42"
+              alt="image"
+            />
+          </span>
+        </ng-template>
+        
+       
+        <!-- Group name -->
+        <span>{{ selectedGroup.name }}</span>
+        <ul [ngClass]="el==false ? 'custom-icons' :'hideClass' ">
+          <!-- Group alert level  -->
+          <li class="alert-triangle">
+            <div class="icon-wrapper">
+              <!-- ngbTooltip="{{'HEADER.GROUPALERTLEVEL' | translate}}"  -->
+              <span
+                (click)="groupAlertUpdate(modalAlert)"
+                [style]="getAlertLevelStatus(!alert_color ? selectedGroup.alert_level :alert_color)"
+              >
+                <i size="18" data-feather="alert-triangle"></i>
+              </span>
+            </div>
+          </li>
+          <!-- Conferen call icon -->
+          <li class="phone">
+            <div class="icon-wrapper">
+              <span
+                (click)="openConferenceCallmModal()"
+                [style]="getConferenceStatus(selectedGroup.is_call_active)"
+              >
+                <i size="18" data-feather="phone-call"> </i>
+              </span>
+            </div>
+          </li>
+          <!-- Live streaming icon -->
+          <li class="video">
+            <div class="icon-wrapper">
+              <!-- ngbTooltip="{{ 'HEADER.VIEWSTREAMS' | translate }}" -->
+              <!-- (click)="openPopup(true)" -->
+              <span
+              (click)="viewstreamModal(modalViewstream)"
+                [style]="
+                  getLiveStreamingStatus(selectedGroup.is_live_stream_active)
+                "
+              >
+                <i size="18" data-feather="video"></i>
+              </span>
+            </div>
+          </li>
+          <!-- ip stream icon -->
+          <li class="camera">
+            <div class="icon-wrapper">
+              <!-- ngbTooltip="{{ 'HEADER.IPSTREAMS'| translate }}" -->
+              <span 
+              (click)="ipstreamModal(modalIpstream)"
+                [style]="
+                getIpCameraStatus(selectedGroup.is_ip_stream_active)
+                "
+                >
+                <i size="18" data-feather="camera"></i>
+              </span>
+            </div>
+          </li>
+          <!-- Menu for pin drop feture -->
+          <li class="dots">
+            <div class="btn-group">
+              <span class=" " data-toggle="dropdown" aria-expanded="true">
+                <div class="icon-wrapper">
+                  <i
+                    data-feather="more-vertical"
+                    [size]="18"
+                    class="text-body cursor-pointer"
+                  ></i>
+                </div>
+              </span>
+              <div class="dropdown-menu" onclick="event.stopPropagation()" style="width:200px">
+                <span class="d-flex pl-1 pb-1" style="width: 200px">
+                  <span class="" >
+                    <div
+                      class="custom-control custom-control-success custom-switch"
+                    >
+                      <input
+                        type="checkbox"
+                        (change)="onAddPinDropSwitchChange($event)"
+                        id="customSwitch1"
+                        class="custom-control-input"
+                      />
+                      <label
+                        for="customSwitch1"
+                        class="custom-control-label"
+                      ></label>
+                    </div>
+                  </span>
+                  <span >{{
+                    "HEADER.ADDPINDROP" | translate
+                  }}</span>
+                </span>
+                <span class="d-flex px-1">
+                  <span class="" >
+                    <div
+                      class="custom-control custom-control-success custom-switch"
+                    >
+                      <input
+                        type="checkbox"
+                        id="customSwitch2"
+                        class="custom-control-input"
+                        (change)="onMovePinDropSwitchChange($event)"
+                      />
+                      <label
+                        for="customSwitch2"
+                        class="custom-control-label"
+                      ></label>
+                    </div>
+                  </span>
+                  <span >{{
+                    "HEADER.MOVEPINDROP" | translate
+                  }}</span>
+                </span>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+ 
+      <div class="message-box mt-4 mb-2">
+        <div class="mess-1" *ngFor="let messages of newData; let i = index">
+          <div class="time" *ngIf="messages.messageId == undefined">
+            <p *ngIf="messages == todaysDate">Today</p>
+            <p *ngIf="messages != todaysDate">{{ messages }}</p>
+          </div>
+
+          <div
+            class="recieve d-flex"
+            *ngIf="messages.sendJid == currentLoggedInUser.jid"
+          >
+            <!-- blue -->
+            <div class="message">
+              <div>
+                <div
+                  (contextmenu)="onMessageClick(messages)"
+                  [contextMenuTrigger]="animatedContextMenu"
+                  class="mt-1 wrapper_message"
+                  style="position: relative"
+                  *ngIf="messages.messageType == '1'"
+                >
+                  <p
+                    id="messageId-{{ messages.messageId }}"
+                    *ngIf="messages.message"
+                    style="margin-bottom: 2px"
+                    class="timings insideChatblue message-card"
+                  >
+                    {{ messages.message }}
+                  </p>
+                  <div class="ticks insideTime">
+                    <div class="timings alignmentRight">
+                      {{ messages.unixTimeStamp | date: "HH:mm" }}
+                    </div>
+                    <div class="alignmentRight">
+                      <img [src]="getTicks(messages.status)" alt="" />
+                    </div> 
+                  </div>
+                </div>
+
+                <div
+                  class="timings messageImageRight"
+                  style="position: relative"
+                  *ngIf="messages.messageType == '2'"
+                >
+                  <!-- <a [href]="messages.mediaImageUrl" target="_blank"> -->
+                    <img
+                      [src]="messages.mediaImageUrl | secure | async"
+                      class="insideChatblue"
+                      style="width: 257px"
+                      (click)="imageViewModal(messages.mediaImageUrl)"
+                    />
+                  <!-- </a> -->
+                  <div class="ticks insideTime">
+                    <div class="timings alignmentRight">
+                      {{ messages.unixTimeStamp | date: "HH:mm" }}
+                    </div>
+                    <div class="alignmentRight">
+                      <img [src]="getTicks(messages.status)" alt="" />
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="timings messageImageRight"
+                  style="position: relative"
+                  *ngIf="messages.messageType == '5'"
+                >
+                  <a (click)="downloadPdf(messages.docUrl)">
+                    <img
+                      src="../../../../../../assets/download.png"
+                      class="insideChatblue"
+                      style="width: 20px"
+                    />
+                  </a>
+                  <div class="ticks insideTime">
+                    <div class="timings alignmentRight">
+                      {{ messages.unixTimeStamp | date: "HH:mm" }}
+                    </div>
+                    <div class="alignmentRight">
+                      <img [src]="getTicks(messages.status)" alt="" />
+                    </div>
+                  </div>
+                </div>
+
+                <section
+                  class="right section audio-section"
+                  style="position: relative"
+                  *ngIf="messages.messageType == '4'"
+                >
+                  <audio
+                    controls
+                    width="100px"
+                    class="insideaudio"
+                    style="background-color: #7367f0;border-radius: 5px;height: 75px;
+                    padding: 10px 10px 25px 10px;"
+                  >
+                    <source
+                      [src]="messages.medidaAudioUrl"
+                      type="audio/mpeg"
+                    />
+                    <source
+                      [src]="messages.medidaAudioUrl"
+                      type="audio/mp3"
+                    />
+                  </audio>
+                  <div class="ticks insideTime">
+                    <div class="timings alignmentRight">
+                      {{ messages.unixTimeStamp | date: "HH:mm" }}
+                    </div>
+                    <div class="alignmentRight">
+                      <img [src]="getTicks(messages.status)" alt="" />
+                    </div>
+                  </div>
+                </section>
+
+                <section
+                  class="right section videoWrapper"
+                  style="position: relative"
+                  *ngIf="messages.messageType == '3'"
+                >
+                  <video
+                    width="250"
+                    height="240"
+                    controls
+                    class="insidechatvideo"
+                    style="background-color: #7367f0"
+                  >
+                    <source
+                      [src]="messages.mediaVideoUrl"
+                      type="video/mp4"
+                    />
+                  </video>
+                  <div class="ticks insideTime">
+                    <div class="timings alignmentRight">
+                      {{ messages.unixTimeStamp | date: "HH:mm" }}
+                    </div>
+                    <div class="alignmentRight">
+                      <img [src]="getTicks(messages.status)" alt="" />
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <!-- quated sender message -->
+              <div
+                (contextmenu)="onMessageClick(messages)"
+                [contextMenuTrigger]="animatedContextMenu"
+                *ngIf="messages.messageType == '9'"
+                class="quatedSender chat-send"
+              >
+                <div id="messageId-{{ messages.messageId }}" class="cotMessage">
+                  <div class="msg">
+                    <div class="details">
+                      <h3
+                        *ngIf="
+                          messages.quotedsendJid == currentLoggedInUser.jid;
+                          else userName
+                        "
+                      >
+                        You
+                      </h3>
+                      <ng-template #userName>
+                        <h3>{{ messages.quotedsenderName }}</h3>
+                      </ng-template>
+                      <p
+                        style="cursor: pointer"
+                        (click)="scrollToMessage(messages)"
+                      >
+                        {{
+                          messages.quotedmessage.length > 40
+                            ? (messages.quotedmessage | slice: 0:40) + ".."
+                            : messages.quotedmessage
+                        }}
+                      </p>
+                    </div>
+                    <!-- <div class="vid-img">
+                      <img src="../../../../../../assets/images/pages/video-poster.jpg" alt="">
+                  </div> -->
+                  </div>
+                </div>
+                <div class="new_message">
+                  <p class="message-card">{{ messages.message }}</p>
+                  <div class="ticks insideTime">
+                    <div class="timings alignmentRight">
+                      {{ messages.unixTimeStamp | date: "HH:mm" }}
+                    </div>
+                    <div class="alignmentRight">
+                      <img [src]="getTicks(messages.status)" alt="" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="send d-flex"
+            *ngIf="
+              messages.sendJid &&
+              messages.sendJid != currentLoggedInUser.jid &&
+              messages.messageType != '8'
+            "
+          >
+            <div
+              class="avatar"
+              *ngIf="messages.sendJid != newData[i - 1].sendJid"
+            >
+            <span *ngIf="messages.sendImage != null && messages.sendImage != '';else noImage">
+              <img
+              style="width: 41px"
+              src="{{messages.sendImage |secure |async}}"
+              alt=" image"
+            />
+            </span>
+            <ng-template #noImage>
+              <img
+              style="width: 41px"
+              src='../../../../../../assets/images/avatars/1-small.svg'
+              alt=" image"
+            />
+            </ng-template>
+            
+            </div>
+
+            <!-- white -->
+            <div class="message reciver-white">
+              <div class="msg-box">
+                <!-- [style]="getMemberColor(messages.sendJid)" Add dynamic color for user -->
+                <span
+                  *ngIf="messages.sendJid != newData[i - 1].sendJid"
+                  class="nameinside" [ngStyle]="{'color': setColorCodes(i, messages.senderName)}"
+                  >{{
+                    messages.senderName.length > 19
+                      ? (messages.senderName | slice: 0:19) + ".."
+                      : messages.senderName
+                  }}</span
+                >
+
+                <div
+                  (contextmenu)="onMessageClick(messages)"
+                  [contextMenuTrigger]="animatedContextMenu"
+                  class=" mess-wrap"
+                  *ngIf="messages.messageType == '1'"
+                  style="position: relative"
+                >
+                  <p
+                    id="messageId-{{ messages.messageId }}"
+                    style="margin-bottom: 2px"
+                    class=""
+                    [ngClass]="
+                      messages.sendJid != newData[i - 1].sendJid
+                        ? 'insideChat'
+                        : 'insideWhiteChat '
+                    "
+                  >
+                    {{ messages.message }}
+                  </p>
+                  <div class="insideTime">
+                    {{ messages.unixTimeStamp | date: "HH:mm" }}
+                  </div>
+                </div>
+
+                <div
+                  class="messageImageLeft document-1"
+                  *ngIf="messages.messageType == '2'"
+                  style="position: relative"
+                >
+                  <!-- <a [href]="messages.mediaImageUrl" target="_blank"> -->
+                    <img
+                      [src]="messages.mediaImageUrl | secure | async"
+                      [ngClass]="
+                        messages.sendJid != newData[i - 1].sendJid
+                          ? 'insideChat'
+                          : 'insideWhiteChat '
+                      "
+                      style="width: 257px"
+                      (click)="imageViewModal(messages.mediaImageUrl)"
+                    />
+                  <!-- </a> -->
+                  <div class="insideTime">
+                    {{ messages.unixTimeStamp | date: "HH:mm" }}
+                  </div>
+                </div>
+
+                <div
+                  class="messageImageLeft document-1"
+                  *ngIf="messages.messageType == '5'"
+                  style="position: relative"
+                >
+                  <a (click)="downloadPdf(messages.docUrl)">
+                    <img
+                      src="../../../../../../assets/download.png"
+                      [ngClass]="
+                        messages.sendJid != newData[i - 1].sendJid
+                          ? 'insideChat'
+                          : 'insideWhiteChat ml-5'
+                      "
+                      style="width: 20px"
+                    />
+                  </a>
+                  <div class="alignmentRight insideTime">
+                    {{ messages.unixTimeStamp | date: "HH:mm" }}
+                  </div>
+                </div>
+
+                <section
+                  class="right section audiowrapper"
+                  *ngIf="messages.messageType == '4'"
+                  style="position: relative"
+                >
+                  <audio
+                    controls
+                    width="100px"
+                    [ngClass]="
+                      messages.sendJid != newData[i - 1].sendJid
+                        ? 'insideaudio'
+                        : 'insideaudio'
+                    "
+                  >
+                    <source
+                      [src]="messages.medidaAudioUrl"
+                      type="audio/mpeg"
+                    />
+                    <source
+                      [src]="messages.medidaAudioUrl"
+                      type="audio/mp3"
+                    />
+                  </audio>
+                  <div class="insideTime">
+                    {{ messages.unixTimeStamp | date: "HH:mm" }}
+                  </div>
+                </section>
+
+                <section
+                  class="right section videoWrapper"
+                  *ngIf="messages.messageType == '3'"
+                  style="position: relative"
+                >
+                  <video
+                    width="250"
+                    height="240"
+                    controls
+                    [ngClass]="
+                      messages.sendJid != newData[i - 1].sendJid
+                        ? 'insidechatvideo'
+                        : 'insidechatvideo '
+                    "
+                  >
+                    <source
+                      [src]="messages.mediaVideoUrl"
+                      type="video/mp4"
+                    />
+                  </video>
+                  <div class="insideTime">
+                    {{ messages.unixTimeStamp | date: "HH:mm" }}
+                  </div>
+                </section>
+              </div>
+              <!-- quated reciver message -->
+
+              <!-- class="reciver-message"> -->
+              <div
+                (contextmenu)="onMessageClick(messages)"
+                [contextMenuTrigger]="animatedContextMenu"
+                *ngIf="messages.messageType == '9'"
+                [ngClass]="
+                  messages.sendJid != newData[i - 1].sendJid
+                    ? 'reciver-message'
+                    : 'reciver-message ml-5'
+                "
+              >
+                <div class="quatedSender chat-send">
+                  <div
+                    id="messageId-{{ messages.messageId }}"
+                    class="cotMessage"
+                  >
+                    <div class="msg">
+                      <div class="details">
+                        <!-- <h3 *ngIf="messages.quotedsendJid == currentLoggedInUser.jid; else userName">You</h3> -->
+                        <!-- <ng-template #userName> -->
+                        <h3>{{ messages.quotedsenderName }}</h3>
+                        <!-- </ng-template> -->
+                        <p
+                          style="cursor: pointer"
+                          (click)="scrollToMessage(messages)"
+                        >
+                          {{
+                            messages.quotedmessage.length > 39
+                              ? (messages.quotedmessage | slice: 0:39) + ".."
+                              : messages.quotedmessage
+                          }}
+                        </p>
+                      </div>
+                      <!-- <div class="vid-img">
+                            <img src="../../../../../../assets/images/pages/video-poster.jpg" alt="">
+                        </div> -->
+                    </div>
+                  </div>
+                  <div
+                    id="messageId-{{ messages.messageId }}"
+                    class="new_message"
+                  >
+                    <p class="message-card">{{ messages.message }}</p>
+                    <div class="ticks insideTime">
+                      <div class="timings alignmentRight">
+                        {{ messages.unixTimeStamp | date: "HH:mm" }}
+                      </div>
+                      <div class="alignmentRight">
+                        <img [src]="getTicks(messages.status)" alt="" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- <p *ngIf="messages.eventType == '1'">Admin has removed {{messages.senderName}} </p>
+          <p *ngIf="messages.eventType == '2'">Admin has added {{messages.senderName}} </p>
+          <p *ngIf="messages.eventType == '3'">{{messages.senderName}} has started an audio call </p>
+          <p *ngIf="messages.eventType == '4'">{{messages.senderName}} has ended an audio call </p>
+          <p *ngIf="messages.eventType == '5'">{{messages.senderName}} has updated the alert level </p>
+          <p *ngIf="messages.eventType == '6'">{{messages.senderName}} has started the Live Stream</p>
+          <p *ngIf="messages.eventType == '7'">{{messages.senderName}} has ended live stream </p> -->
+
+          <!-- uncomment -->
+          <div class="newJoin" *ngIf="messages.messageType == '8'">
+            <p *ngIf="messages.eventType && messages.message">
+              {{ messages?.message || "" }}
+              <span class="greyNotificationTime timings alignmentRight">{{ messages.unixTimeStamp | date: "HH:mm" }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-1 mb-1 typingParent">
+        <div *ngIf="typing" class="typingChild">
+          {{ typingName }} is typing...
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-send">
+      <div *ngIf="replyDiv" class="cotMessage">
+        <div class="msg">
+          <div class="details">
+            <h3
+              *ngIf="
+                qoutMessageData.sendJid == currentLoggedInUser.jid;
+                else userName
+              "
+            >
+              You
+            </h3>
+            <ng-template #userName>
+              <h3>{{ qoutMessageData.senderName }}</h3>
+            </ng-template>
+            <p>
+              {{
+                qoutMessageData.message.length > 55
+                  ? (qoutMessageData.message | slice: 0:55) + ".."
+                  : qoutMessageData.message
+              }}
+            </p>
+          </div>
+          <!-- <div class="vid-img">
+                <img src="../../../../../../assets/images/pages/video-poster.jpg" alt="">
+            </div> -->
+        </div>
+        <div class="cross">
+          <div (click)="closeReplyMessage()" class="close"></div>
+        </div>
+      </div>
+      <!-- Submit Chat form -->
+      <form class="chat-app-form" action="javascript:void(0);">
+        <!-- <div class="tooltip">Hover over me
+          <span class="tooltiptext">Tooltip text</span>
+        </div> -->
+        <div class="input-group input-group-merge mr-1 form-send-message audio_btn">
+          <div class="input-group-prepend">
+            <span
+              class="speech-to-text input-group-text"
+              ngbTooltip="{{ 'HEADER.RECORDAUDIO' | translate }}"
+              *ngIf="!isAudioRecording && !audioBlobUrl"
+              (click)="startAudioRecording()"
+            >
+              <i data-feather="mic" class="cursor-pointer"></i>
+            </span>
+            <span
+              class="speech-to-text input-group-text stop_btn"
+              ngbTooltip="{{ 'HEADER.STOPRECORD' | translate }}"
+              *ngIf="isAudioRecording && !audioBlobUrl"
+              (click)="stopAudioRecording()"
+            >
+              <i
+                size="20"
+                data-feather="stop-circle"
+                class="cursor-pointer"
+              ></i>
+            </span>
+            <!-- <span
+              class="speech-to-text input-group-text"
+              ngbTooltip="{{ 'HEADER.DELETERECORD' | translate }}"
+              style="color: red"
+              *ngIf="!isAudioRecording && audioBlobUrl"
+              (click)="clearAudioRecordedData()"
+            >
+              <i size="20" data-feather="trash-2" class="cursor-pointer"></i>
+            </span> -->
+          </div>
+          <span
+            class="form-control message"
+            *ngIf="isAudioRecording && !audioBlobUrl"
+          >
+            {{ audioRecordedTime }}
+          </span>
+           
+          <audio
+            style="width: 250px"
+            *ngIf="!isAudioRecording && audioBlobUrl"
+            controls
+          >
+            <source [src]="audioBlobUrl" type="audio/mp3" />
+          </audio>
+          <span
+          class="speech-to-text input-group-text delete_btn"
+          ngbTooltip="{{ 'HEADER.DELETERECORD' | translate }}"
+          style="color: red"
+          *ngIf="!isAudioRecording && audioBlobUrl"
+          (click)="clearAudioRecordedData()"
+        >
+          <i size="20" data-feather="trash-2" class="cursor-pointer"></i>
+        </span>
+          <textarea
+            class="form-control"
+            id="basicTextarea resize"
+            rows="1"
+            placeholder="Textarea"
+            #textInput
+            *ngIf="!isAudioStarted"
+            type="text"
+            class="form-control message"
+            placeholder="{{ 'HEADER.TYPEYOURMSG' | translate }}"
+            [(ngModel)]="chatMessage"
+            ngModel
+            (keyup)="keyup($event.target.value)"
+            name="chat-message"
+            autocomplete="off"
+            (keydown.enter)="updateChat()"
+            (keydown)="onKeyDown($event)"
+          >
+          </textarea>
+          <!-- <input
+            #textInput
+            *ngIf="!isAudioStarted"
+            type="text"
+            class="form-control message"
+            placeholder="{{ 'HEADER.TYPEYOURMSG' | translate }}"
+            [(ngModel)]="chatMessage"
+            ngModel
+            [value]="fieldvalue"
+            (keyup)="keyup($event.target.value)"
+            name="chat-message"
+            autocomplete="off"
+            (keydown.enter)="updateChat()"
+          /> -->
+          <div
+            *ngIf="!isAudioStarted"
+            class="input-group-append"
+            ngbTooltip="{{ 'HEADER.ATTACHFILE' | translate }}"
+          >
+            <span class="input-group-text" style="border: 1px solid #d8d6de; border-radius: 3px;">
+              <label for="attach-doc" class="attachment-icon mb-0">
+                <i
+                  data-feather="image"
+                  class="cursor-pointer lighten-2 text-secondary"
+                ></i>
+                <input
+                  type="file"
+                  accept="{{ mediaFormats }}"
+                  id="attach-doc"
+                  (change)="handleFileUpload($event)"
+                  #inputFile
+                  hidden
+                /> </label
+            ></span>
+
+            
+          </div>
+        </div>
+        <button
+          *ngIf="!isAudioStarted"
+          type="button"
+          class="btn btn-primary send"
+          (click)="updateChat()"
+          rippleEffect
+        >
+          <i data-feather="send" class="d-lg-none"></i>
+          <span class="d-none d-lg-block">{{ "HEADER.SEND" | translate }}</span>
+        </button>
+        <button
+          *ngIf="isAudioStarted && audioBlobUrl"
+          type="button"
+          class="btn btn-primary send"
+          (click)="sendAudio()"
+          rippleEffect
+        >
+          <i data-feather="send" class="d-lg-none"></i>
+          <span class="d-none d-lg-block">{{ "HEADER.SEND" | translate }}</span>
+        </button>
+      </form>
+      <!--/ Submit Chat form -->
+    </div>
+  </div>
+</section>
+
+<!--/ User Chat profile right area -->
+
+<!-- Group Alert Update modal -->
+<ng-template #modalAlert let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title modal-primary" id="myModalLabel160">
+      {{ "HEADER.UPDATEALERT" | translate }}
+    </h5>
+    <button type="button" class="close" (click)="cancel()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0">
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group row">
+          <div class="col-sm-3 col-form-label">
+            <label>{{ "HEADER.GROUPNAME" | translate }}</label>
+          </div>
+          <div class="col-sm-7">
+            <input
+              disabled
+              [(ngModel)]="selectedGroup.name"
+              maxlength="30"
+              type="text"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="form-group row">
+          <div class="col-sm-3 col-form-label">
+            <label>{{ "HEADER.ALERTLEVEL" | translate }}</label>
+          </div>
+          <div class="col-sm-7">
+            <fieldset class="form-group">
+              <ng-select
+                class="dropdownClass"
+                [items]="alertLevels"
+                [(ngModel)]="selectedAlert"
+                [clearable]="false"
+                bindLabel="name"
+                bindValue="name"
+                placeholder="Select Alert"
+              ></ng-select>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" (click)="submitAlert()" rippleEffect>
+      {{ "HEADER.SUBMIT" | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="cancel()"
+      rippleEffect
+    >
+      {{ "HEADER.CANCEL" | translate }}
+    </button>
+  </div>
+</ng-template>
+
+<!-- IP Stream modal -->
+<ng-template #modalIpstream let-modal>
+  <div class="modal-header">
+    <!-- <h4 class="modal-title" id="myModalLabel1">
+      {{ "HEADER.IPSTREAMS" | translate }}
+    </h4> -->
+    <button type="button"
+     class="close closebutton"
+      (click)="cancel()"
+      aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0">
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <h1
+            *ngIf="ipStreamListData"
+            style="text-align: center"
+            class="mt-2 mb-2 streamfonts"
+          >
+            {{ "HEADER.IPSTREAMS" | translate }}
+          </h1>
+          <h3
+            *ngIf="!ipStreamListData"
+            style="text-align: center"
+            class="mt-2 mb-2"
+          >
+            No IP Camera Available
+          </h3>
+          <div class="">
+            <div class="">
+
+    <div class="mb-2" *ngFor="let IPstreams of ipStreamListData">
+      <div class="card-body cardBgColor" (click)="openVideo(IPstreams.rts_link)">
+        <div class="row" >
+          <div class="col-2 col-sm-2 col-md-2">
+            <div class="imgbox">
+              <img src="{{ IPstreams.icon | secure | async }}" alt="" />
+            </div>
+          </div>
+          <div class="col-6 col-sm-9 col-md-9 ipDiv">
+            <div class="rightdiv">
+              <div class="name">{{ IPstreams.name }}</div>
+              <div class="dflex">
+                <div class="startedtime">
+                  Installed:
+                  {{ IPstreams.created_at | date: "shortDate" }}
+                </div>
+                <div class="time">
+                  Updated @ {{ IPstreams.updated_at | date: "short" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <div class="modal-footer" *ngIf="page.count>1">
+    <div class="pagination mb-2">
+      <ul class="pager">
+        <i
+          *ngIf="current_page > 1"
+          class="datatable-icon-left"
+          (click)="pagePrev()"
+        ></i>
+        <ng-container *ngFor="let pages of fakeArray; let p = index">
+          <ng-container *ngIf="p + 1 > pageIfy && p + 1 <= pageIfx">
+            <li
+              class="numbers"
+              [ngClass]="p + 1 == current_page ? 'numbers-active' : 'numbers'"
+              (click)="pagination(p + 1)"
+            >
+              {{ p + 1 }} &nbsp;
+            </li>
+          </ng-container>
+        </ng-container>
+        <i
+          *ngIf="current_page < page.count"
+          class="datatable-icon-right"
+          (click)="pageNext()"
+        ></i>
+      </ul>
+    </div>
+  </div>
+</ng-template>
+
+<!-- View Streams Modal  -->
+<ng-template #modalViewstream let-modal>
+  <div class="modal-header">
+    <button
+      type="button"
+      class="close closebutton"
+      (click)="cancel()"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body" tabindex="0">
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <h1
+            *ngIf="getLiveStreams.length"
+            style="text-align: center"
+            class="mt-2 mb-2 streamfont"
+          >
+            {{ "HEADER.VIEWSTREAMS" | translate }}
+          </h1>
+          <h3
+            *ngIf="!getLiveStreams.length"
+            style="text-align: center"
+            class="mt-2 mb-2"
+          >
+            No Live Streaming Available
+          </h3>
+          <div class="">
+            <div class="">
+              <div class="mb-2" *ngFor="let viewStreams of getLiveStreams">
+                <div
+                  class="card-body cardBgColor cursor"
+                  (click)="getCurrentVideo(viewStreams)"
+                >
+                  <div class="row">
+                    <div class="col-3 col-sm-3 col-md-3">
+                      <div class="imgbox">
+                        <img
+                        src="{{
+                            viewStreams.profile_image
+                            ? (viewStreams.profile_image | secure | async)
+                            : '../../../../../assets/images/avatars/group-image-placeholder.jpg'
+                          }}"
+                          />
+                      </div> 
+                    </div>
+                    <div class="col-6 col-sm-9 col-md-9">
+                      <div class="rightdiv">
+                        <div class="name">
+                          {{ viewStreams.first_name || "Dummy" }}
+                        </div>
+                        <div class="dflex">
+                          <div class="time">
+                            {{ viewStreams.createdAt | date: "shortTime" }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer"></div>
+  <div class=""></div>
+</ng-template>
+
+<!-- confirmation modal -->
+<ng-template #modalConfirm let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Open stream in new tab</h5>
+    <button
+      type="button"
+      class="close"
+      (click)="modal.dismiss('Cross click')"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body lh-sm text-wrap text-break" tabindex="0" ngbAutofocus>
+    Are you sure you want to open this stream?
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="openInNewTab()"
+      rippleEffect
+    >
+      Open
+    </button>
+    <button type="button" class="btn btn-info" (click)="cancel()" rippleEffect>
+      Cancel
+    </button>
+  </div>
+</ng-template>
+
+
+<!-- Conference call confirmation modal -->
+<ng-template #conferenceCallModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Conference Call</h5>
+    <button
+      type="button"
+      class="close"
+      (click)="cancel()"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body lh-sm text-wrap text-break" tabindex="0" ngbAutofocus>
+    Are you sure you want to join this conference call?
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="openConferenceCall()"
+      rippleEffect
+    >
+      Open
+    </button>
+    <button type="button" class="btn btn-info" (click)="cancel()" rippleEffect>
+      Cancel
+    </button>
+  </div>
+</ng-template>
+
+<!-- View Image Modal -->
+<ng-template #imageView let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">View Image</h5>
+    <button
+      type="button"
+      class="close"
+      (click)="modal.dismiss('Cross click')"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+ <div class="imageWidth" tabindex="0" ngbAutofocus>
+  <img class="imageModal" src="{{currentImage | secure | async}}" alt=""/>
+  </div> 
+  <!-- <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="openInNewTab()"
+      rippleEffect
+    >
+      Open
+    </button>
+    <button type="button" class="btn btn-info" (click)="cancel()" rippleEffect>
+      Cancel
+    </button>
+  </div> -->
+</ng-template>
+

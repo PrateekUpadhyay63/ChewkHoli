@@ -1,0 +1,25 @@
+export const locale = {
+  lang: "ar",
+  data: {
+    HEADER: {
+      OSTYPE: "نوع نظام التشغيل",
+      APPVERSION: "نسخة التطبيق",
+      UPDATEDAT: "تم التحديث في",
+      ACTION: "عمل",
+      UPDATEANDROIDFILE: "تحديث ملف تطبيق Android",
+      UPDATEIOSFILE: "تحديث ملف تطبيق IOS",
+      VERSION: "إصدار",
+      VERSIONISREQUIRED: "الإصدار مطلوب",
+      ENTERVERSION: "أدخل الإصدار",
+      UPLOADAPKEFILE: "تحميل ملف .apk",
+      UPLOADIOSFILE: "تحميل ملف .ipa",
+      CHOOSEFILE: "اختر ملف",
+      FILESIZELIMIT: "يجب أن يكون حجم الملف أقل من 1 غيغابايت",
+      APPLICATIONFILE: "ملف التطبيق مطلوب",
+      UPDATE: "تحديث",
+      CANCEL: "يلغي",
+      PATTERNERROR: 'تنسيق الإصدار غير صالح.',
+      VERSIONMAXLENGTH: 'يجب ألا يزيد إصدار التطبيق عن 5 أرقام',
+    },
+  },
+};

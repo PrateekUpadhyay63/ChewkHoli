@@ -1,0 +1,27 @@
+<ul ngbNav #navFilled="ngbNav" class="nav-tabs nav-fill">
+    <li ngbNavItem>
+        <a ngbNavLink><span [data-feather]="'disc'"></span>  {{ 'HEADER.DISK' | translate }}</a>
+      <ng-template ngbNavContent>
+        <!-- Mdoule commentted as new CR -->
+       <!-- <app-disk-list></app-disk-list> -->
+
+       <app-disk-data></app-disk-data>
+      </ng-template>
+    </li>
+    <li ngbNavItem>
+      <a ngbNavLink> <span [data-feather]="'database'"></span> {{ 'HEADER.DATA' | translate }}</a>
+      <ng-template ngbNavContent>       
+       <app-data></app-data>
+      </ng-template>
+    </li>
+    <li ngbNavItem>
+      <a ngbNavLink> <span [data-feather]="'activity'"></span> {{ 'HEADER.ACTIVITY' | translate }}</a>
+      <ng-template ngbNavContent>   
+        <app-activity></app-activity>    
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="navFilled" class="mt-2"></div>
+
+
+  

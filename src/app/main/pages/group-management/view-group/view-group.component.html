@@ -1,0 +1,272 @@
+
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+      <!-- users edit start -->
+      <section class="app-user-add">
+        <div class="card">
+          <div class="card-body">
+            <ul ngbNav #nav="ngbNav" class="nav nav-pills">
+              <li ngbNavItem>
+                <a ngbNavLink class="d-flex align-items-center"
+                  ><i data-feather="user" class="mr-sm-50"></i><span class="d-none d-sm-block">{{ 'HEADER.MODALTITLE' | translate }}</span></a
+                ><br>
+                <ng-template ngbNavContent>
+                  <!-- Account Tab starts -->
+                  <div class="tab-pane active" id="account" aria-labelledby="account-tab" role="tabpanel">
+                    <form class="add-new-user">
+                    <!-- users edit account form start -->
+                   <!-- users edit media object start -->
+                   <div class="media mb-2">
+                    <!-- <div  > -->
+                    <div  *ngIf="avatarImage !== null && avatarImage !== ''; else customAvatar">
+                      <img
+                        class="user-avatar users-avatar-shadow rounded mr-2 my-25 cursor-pointer"
+                        [src]="avatarImage | secure | async"
+                        height="90"
+                        width="90"
+                        alt="User avatar"
+                      />
+                    </div>
+                    <div class="media-body mt-50">
+                    </div>
+                  </div>
+                  <ng-template #customAvatar>
+                    <!-- <div class="avatar rounded mr-2 my-25 bg-light-danger avatar-xl">
+                      <span class="avatar-content"> {{currentRow.first_name | slice:0:1}}{{currentRow.last_name |slice:0:1}} </span>
+                    </div> -->
+                    <img
+                      class="user-avatar users-avatar-shadow rounded mr-2 my-25 cursor-pointer"
+                      src="../../../../../assets/images/avatars/user-avatar-image.jpg"
+                      height="90"
+                      width="90"
+                      alt="User avatar"
+                    /> 
+                  </ng-template>
+                      <div class="row" >
+  
+                        <!-- First Name -->
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <label class="form-label" for="basic-icon-default-fullname">{{ 'HEADER.GROUPNAME' | translate }}</label>
+                            <input
+                              type="text"
+                              class="form-control dt-full-name"
+                              id="basic-icon-default-fullname"
+                              placeholder="John"
+                              name="name"
+                              [(ngModel)]="rows && rows.name"
+                              #GroupNameRef="ngModel"
+                              required
+                            
+                              aria-label="John Doe"
+                              aria-describedby="basic-icon-default-fullname2"
+                            />
+                          </div>
+                        </div>
+  
+                            <!-- Language drop down -->
+                            <div class="col-md-3">
+                              <div class="form-group mb-2">
+                                <label class="form-label" 
+                                for="language" >{{ 'HEADER.LANGUAGE' | translate }}</label>
+                                <select id="lanaguage" class="form-control"
+                                aria-label="Default select example"
+                                [(ngModel)]="rows && rows.Language.id"
+                                name="language"
+                                disabled
+                                #userLanguageRef="ngModel"
+                                required>
+                                  <option  *ngFor="let item of language " [ngValue]="item.id">{{item.value}}</option>
+                                </select>
+                              </div>
+                            </div>
+  
+                         <!-- status drop down -->
+                         <div class="col-md-3">
+                          <div class="form-group mb-2">
+                            <label class="form-label" for="status">{{ 'HEADER.STATUS' | translate }}</label>
+                            <select id="user-status" 
+                            class="form-control"
+                            name="status"
+                            [(ngModel)]="rows && rows.status"
+                            #userStatusRef="ngModel"
+                            disabled
+                            required>
+                              <option   value="1" [selected]="rows && rows.status ==1">Active</option>
+                              <option  value="0"  [selected]="rows && rows.status ==0">In-active</option>
+                            </select>
+                          </div>
+                        </div>
+                        <!-- alret level -->
+                         <div class="col-md-3">
+                          <div class="form-group mb-2">
+                            <label class="form-label" for="alret_level">{{ 'HEADER.ALRETLEVEL' | translate }}</label>
+                            <select id="alert_level" 
+                            class="form-control"
+                            name="alert_level"
+                            [(ngModel)]="rows && rows.alert_level"
+                            #alert_level="ngModel"
+                            disabled
+                            required>
+                              <option   value="1" [selected]="rows && rows.alert_level ==1">Grey</option>
+                              <option  value="2"  [selected]="rows && rows.alert_level ==2">Yellow</option>
+                              <option  value="3"  [selected]="rows && rows.alert_level ==3">Red</option>
+                            </select>
+                          </div>
+                        </div>
+  
+                         <!-- Multi Select  sub-admin drop down -->
+                         <div class="col-md-4">
+                          <label>{{ 'HEADER.SELECTSUBADMIN' | translate }}</label>
+                          <div class="form-group">
+                           <ng-select
+                              name="sub_admin"
+                              disabled
+                              [items]="multiSubAdminUsers"
+                              [multiple]="true"
+                              bindLabel="name"
+                              placeholder="{{ 'HEADER.SELECTSUBADMIN' | translate }}"
+                              [(ngModel)]="multiSubAdminSelected"
+                              >
+                              <ng-template ng-label-tmp let-item1="item" let-clear="clear">
+                                <span class="ng-value-label"> {{ item1.first_name }} {{item1.last_name}} </span>
+
+                                <span class="ng-value-icon right" (click)="clearSubAdmin(item1)" (click)="clear(item1)" aria-hidden="true">×</span> 
+                              </ng-template>
+                            </ng-select>
+                            
+                          </div>
+                        </div>
+                         <!-- {{multiSubAdminSelected |json}} -->
+
+                           <!-- Multi  Select End users drop down -->
+                        <div class="col-md-4">
+                          <label>{{ 'HEADER.SELECTUSER' | translate }}</label>
+                          <div class="form-group">
+                            <ng-select
+                              name="multi_end"
+                              disabled
+                              [items]="multiEndUsers"
+                              [multiple]="true"
+                              bindLabel="name"
+                              bindValue=""
+                              placeholder="{{ 'HEADER.SELECTUSER' | translate }}"
+                              [(ngModel)]="multiEndbUsersSelected"
+                            >
+                              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                <span class="ng-value-label">{{ item.first_name | titlecase }} {{ item.last_name | titlecase }}  </span>
+                                <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span> 
+                              </ng-template>
+                            </ng-select>
+                          </div>
+                        </div>
+                        <!-- {{multiEndbUsersSelected |json}} -->
+                        <!-- Multi  {{ 'HEADER.SELECTSUPERUSER' | translate }} drop down -->
+                        <div class="col-md-4">
+                          <label>{{ 'HEADER.SELECTSUPERUSER' | translate }}</label>
+                          <div class="form-group">
+                            <ng-select
+                              name="end_user"
+                              disabled
+                              [items]="multiEndbUsersSelected"
+                              [multiple]="true"
+                              bindLabel="name"
+                              bindValue = ""
+                              placeholder="{{ 'HEADER.SELECTSUPERUSER' | translate }}"
+                              [(ngModel)]="multiSuperbUsersSelected">
+                              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                <span class="ng-value-label">{{ item.first_name | titlecase }} {{ item.last_name | titlecase }}</span>
+                                <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span> 
+                              </ng-template>
+                            </ng-select>
+                          </div>
+                        </div>
+                           <!-- {{ 'HEADER.SHAREDGROUP' | translate }} check-box -->
+                           <div *ngIf="currentUserDetails.Role.id == 5 && rows && rows.shared == true" class="col-md-12"> 
+                            <div class="custom-control custom-checkbox">
+                              <input disabled  [checked]="rows && rows.shared" type="checkbox" class="custom-control-input" id="customCheck2" />
+                              <label class="custom-control-label" for="customCheck2">{{ 'HEADER.SHAREDGROUP' | translate }}</label>
+                            </div>                        
+                          </div> 
+  
+                          <!-- Add Other Organization repeater -->
+                        <section *ngIf="rows && rows.shared == true" class="form-control-repeater" style="padding-top: 20px;">
+                            <div class="row">
+                              <div class="col-12">
+                                  <span class="card-title" style="padding-left: 20px;">{{ 'HEADER.ADDEDORGDETAILS' | translate }}</span>
+                                  <div class="card-body">
+                                    <form action="#" class="invoice-repeater" >
+                                      <div *ngFor="let item of OrganizationName; let i = index" >
+                                        <div class="row d-flex align-items-end">
+                                          <div class="col-md-6 ">
+                                            <label>{{ 'HEADER.SELECTORG' | translate }}</label>
+                                            <div class="form-group">
+                                              <ng-select
+                                                name="itemId{{ i }}"
+                                                id="itemId{{ i }}"
+                                                [multiple]="false"
+                                                bindLabel="name"
+                                                placeholder="{{ 'HEADER.SELECTORGNAME' | translate }}"
+                                                [(ngModel)]="item && item.name"
+                                                [disabled]="true"
+                                                [clearable]="false"
+                                              >
+                                              </ng-select>
+                                              <!-- {{AllOrganizationName |json}} -->
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <label>{{ 'HEADER.SELECTSUBADMIN' | translate }}</label>
+                                            <div class="form-group">
+                                              <ng-select
+                                                [items]="OrganizationName.member"
+                                                [disabled]="true"
+                                                [clearable]="false"
+                                                [multiple]="true"
+                                                bindLabel="name"
+                                                name="itemName{{ i }}"
+                                                id="itemName{{ i }}"
+                                                placeholder="{{ 'HEADER.SELECTSUBADMIN' | translate }}"
+                                                [(ngModel)]="item && item.member">
+                                                <!-- <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                                    <span class="ng-value-label"> {{ item.name }}</span>
+                                                    <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                                                </ng-template> -->
+                                              </ng-select>
+                                              <!-- {{item.member |json}} -->
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <hr />
+                                      </div>
+                                    </form>
+                                  </div>
+                              </div>
+                            </div>
+                          </section> 
+                                <!-- end  -->
+                       <!-- submit button -->
+                        <div class="col-12 d-flex flex-sm-row flex-column mt-2">
+                            <button
+                            type="button"
+                            class="btn btn-primary mr-1"
+                            (click)="back()"
+                            rippleEffect
+                            rippleEffect>{{ 'HEADER.BACK' | translate }}
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                    <!-- users edit account form ends -->
+                  </div>
+                  <!-- Account Tab ends -->
+                </ng-template>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+          </div>
+        </div>
+      </section>
+      <!-- users edit ends -->
+    </div>
+  </div>
+  

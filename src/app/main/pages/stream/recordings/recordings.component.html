@@ -1,0 +1,77 @@
+<div class="card">
+  <div class="selectGroup mt-2 m-1">
+    <div class="col-md-1 col-1 days ml-2">
+      {{ 'HEADER.SELECTGROUP' | translate }} 
+    </div>
+    <div class="col-md-4 col-4">
+      <fieldset class="form-group">
+        <ng-select
+          [items]="user"
+          name="selectedUser"
+          bindLabel="name"
+          placeholder=" {{ 'HEADER.SELECTGRPTOVIEWRCD' | translate }} "
+          (change)="filterByGroup($event)"
+          [(ngModel)]="selectedGroup"
+        >
+        </ng-select>
+      </fieldset>
+    </div>
+  </div>
+  <div class="modal-body" tabindex="0">
+    <div class="row">
+      <div class="col-12 selectGroup">
+        <div class="form-group">
+          <h3 style="text-align: center" class="mt-2 mb-2">
+            {{ "HEADER.RECORDINGS" | translate }}
+          </h3>
+          <div class="">
+            <div class="liveCards">
+              <div class="mb-2 cardDiv" *ngFor="let streams of recordings">
+                <div class="cardBgColor">
+                  <div class="" (click)="openVideo(streams.attachmentUrl)">
+                    <div class="col-12 col-sm-12 col-md-12">
+                      <div
+                        class="imgbox"
+                        *ngIf="streams.attachmentThumbUrl"
+                        else
+                        #cardsTemplate
+                      >
+                        <img
+                          style="width: 100px"
+                          [src]="streams.attachmentThumbUrl | secure | async"
+                          alt="Image not available"
+                        />
+                      </div>
+                      <div class="Name">Name : {{ streams.User?.name }}</div>
+                      <div class="Created">
+                        Created at : {{ streams.created_at | date: "short" }}
+                      </div>
+                      <div class="duration" *ngIf="streams?.duration">
+                        Duration : {{ streams.duration }}
+                      </div>
+                      <div class="notduration" *ngIf="!streams?.duration">
+                        Duration : not available
+                      </div>
+
+                      <ng-template #cardsTemplate>
+                        <img
+                          src="../../../../../assets/documentimage.jpg"
+                          alt="Image not found"
+                        />
+                      </ng-template>
+                    </div>
+                    <!-- <div class="col-12 col-sm-12 col-md-12 mt-2">
+                          <div>
+                            <p class="name">{{ streams.first_name }} {{ streams.last_name }}</p>
+                          </div>
+                        </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

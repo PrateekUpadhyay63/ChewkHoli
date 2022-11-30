@@ -1,0 +1,11 @@
+// .modal .modal-content {
+//   width: 100% !important;
+// }
+.conference .toggle.cursor {
+  display: none;
+}
+@media (min-width: 576px) {
+  .modal-slide-in .modal-dialog {
+    width: 100%;
+  }
+}

@@ -1,0 +1,255 @@
+
+
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- users edit start -->
+    <section class="app-user-add">
+      <div class="card">
+        <div class="card-body">
+          <ul ngbNav #nav="ngbNav" class="nav nav-pills">
+            <li ngbNavItem>
+              <a ngbNavLink class="d-flex align-items-center"
+                ><i data-feather="user" class="mr-sm-50"></i><span class="d-none d-sm-block">{{ 'HEADER.MODALTITLE' | translate }}</span></a
+              ><br>
+              <ng-template ngbNavContent>
+                <!-- Account Tab starts -->
+                <div class="tab-pane active" id="account" aria-labelledby="account-tab" role="tabpanel">
+                  <form class="add-new-user" (ngSubmit)="(newUserForm.form.valid)" #newUserForm="ngForm">
+                  <!-- users edit account form start -->
+               
+                    <div class="row" >
+
+                      <!-- First Name -->
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label class="form-label" for="basic-icon-default-fullname">{{ 'HEADER.FIRSTNAME' | translate }}</label>
+                          <input
+                            type="text"
+                            class="form-control dt-full-name"
+                            id="basic-icon-default-fullname"
+                            placeholder="John"
+                            name="first_name"
+                            minlength="3"
+                            maxlength="50"
+                            [(ngModel)]="first_name"
+                            [class.error]="newUserForm.submitted && FNameRef.invalid"
+                            #FNameRef="ngModel"
+                            required
+                            aria-label="John Doe"
+                            aria-describedby="basic-icon-default-fullname2"
+                          />
+                          <span *ngIf="newUserForm.submitted && FNameRef.invalid" class="invalid-form">
+                            <small class="form-text text-danger" *ngIf="FNameRef.errors.required">First Name is required!</small>
+                            <small class="form-text text-danger" *ngIf="FNameRef.errors.minlength">First Name atleast 3 character</small>
+                            <small class="form-text text-danger" *ngIf="FNameRef.errors.maxlength">First Name must not excced 50 character</small>
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- last Name -->
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label class="form-label" for="basic-icon-default-fullname">{{ 'HEADER.LASTNAME' | translate }}</label>
+                          <input
+                            type="text"
+                            class="form-control dt-full-name"
+                            id="basic-icon-default-fullname"
+                            placeholder=" Doe"
+                            name="last_name"
+                            minlength="3"
+                            maxlength="50"
+                            [(ngModel)]="last_name"
+                            [class.error]="newUserForm.submitted && LNameRef.invalid"
+                            #LNameRef="ngModel"
+                            required
+                            aria-label="John Doe"
+                            aria-describedby="basic-icon-default-fullname2"
+                          />
+                          <span *ngIf="newUserForm.submitted && LNameRef.invalid" class="invalid-form">
+                            <small class="form-text text-danger" *ngIf="LNameRef.errors.required">Last Name is required!</small>
+                            <small class="form-text text-danger" *ngIf="LNameRef.errors.minlength">Last Name atleast 3 character</small>
+                            <small class="form-text text-danger" *ngIf="LNameRef.errors.maxlength">Last Name must not excced 50 character</small>
+                          </span>
+                        </div>
+                      </div>
+                     <!-- Email -->
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label class="form-label" for="basic-icon-default-email">{{ 'HEADER.EMAIL' | translate }}</label>
+                          <input
+                            type="email"
+                            id="basic-icon-default-email"
+                            class="form-control dt-email"
+                            placeholder="john.doe@example.com"
+                            aria-label="john.doe@example.com"
+                            aria-describedby="basic-icon-default-email2"
+                            name="username"
+                            [(ngModel)]="email"
+                            [class.error]="newUserForm.submitted && FEmailRef.invalid"
+                            #FEmailRef="ngModel"
+                            required
+                          />
+                          <span *ngIf="newUserForm.submitted && FEmailRef.invalid" class="invalid-form">
+                            <small class="form-text text-danger" *ngIf="FEmailRef.errors.required">This field is required!</small>
+                            <small class="form-text text-danger" *ngIf="FEmailRef.errors.minlength">Email Id must be valid</small>
+                          </span>
+                        </div>
+                      </div>
+                   
+                      <!-- pass code -->
+                      <!-- <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="name">Pass Code</label>
+                          <div class="input-group input-group-merge form-password-toggle">
+                          <input
+                            [type]="passwordTextType ? 'text' : 'password'"
+                            id="passcode"
+                            class="form-control"
+                            placeholder="Pass Code"
+                            name="passcode"
+                            [(ngModel)]="currentRow.passcode"
+                            [class.error]="accountForm.submitted && PassCodeRef.invalid"
+                            #PassCodeRef="ngModel"
+                            required
+                          />
+                          <div class="input-group-append">
+                            <span class="input-group-text cursor-pointer"
+                              ><i
+                                class="feather font-small-4"
+                                [ngClass]="{
+                                  'icon-eye-off': passwordTextType,
+                                  'icon-eye': !passwordTextType
+                                }"
+                                (click)="togglePasswordTextType()"
+                              ></i
+                            ></span>
+                          </div>
+                        </div>
+                          <span *ngIf="accountForm.submitted && PassCodeRef.invalid" class="invalid-form">
+                            <small class="form-text text-danger" *ngIf="PassCodeRef.errors.required"
+                              >This field is required!</small
+                            >
+                          </span>
+                        </div>
+                      </div> -->
+
+                          <!-- Language drop down -->
+                          <div class="col-md-3">
+                            <div class="form-group mb-2">
+                              <label class="form-label" 
+                              for="language" >{{ 'HEADER.LANGUAGE' | translate }}</label>
+                              <select id="lanaguage" class="form-control"
+                              aria-label="Default select example"
+                              [(ngModel)]="selectedLanguage.id"
+                              name="language"
+                              #userLanguageRef="ngModel"
+                              required>
+                                <option  *ngFor="let item of language " [ngValue]="item.id">{{item.value}}</option>
+                              </select>
+                              <span *ngIf="newUserForm.submitted && userLanguageRef.invalid" class="invalid-form">
+                                <small class="form-text text-danger" *ngIf="userLanguageRef.errors.required">This field is required!</small>
+                              </span>
+                            </div>
+                          </div>
+
+                         <!-- status drop down -->
+                          <div class="col-md-3">
+                            <div class="form-group mb-2">
+                              <label class="form-label" for="status">{{ 'HEADER.STATUS' | translate }}</label>
+                              <select id="user-status" 
+                              class="form-control"
+                              name="status"
+                              [(ngModel)]="selectedStatus.id"
+                              #userStatusRef="ngModel"
+                              disabled
+                              required>
+                                <option  *ngFor="let item of status" [ngValue]="item.id">{{item.value}}</option>
+                              </select>
+                              <span *ngIf="newUserForm.submitted && userStatusRef.invalid" class="invalid-form">
+                                <small class="form-text text-danger" *ngIf="userStatusRef.errors.required">This field is required!</small>
+                              </span>
+                            </div>
+                          </div>
+
+                     <!-- User Type drop down -->
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label class="form-label" for="user-role">{{ 'HEADER.USERTYPE' | translate }}</label>
+                          <select id="user_type" class="form-control"
+                          [(ngModel)]="selectedUserType"
+                          name="roleId"
+                          #userTypesRef="ngModel"
+                          (change)="onUserSelect($event)"
+                          required>
+                            <option  *ngFor="let item of userTypeArray " [ngValue]="item.id">{{item.name}}</option>
+                          </select>
+                          <span *ngIf="newUserForm.submitted && userTypesRef.invalid" class="invalid-form">
+                            <small class="form-text text-danger" *ngIf="userTypesRef.errors.required">{{ 'HEADER.USERTYPE' | translate }} is required!</small>
+                          </span>
+                        </div>
+                      </div>
+
+                       <!-- org drop down -->
+                      <div class="col-md-3">
+                        <div  class="form-group" *ngIf="showOrgDropDown">
+                          <label class="form-label" for="user-role">{{ 'HEADER.ORGANIZATIONS' | translate }}</label>
+                          <select id="organization_id" class="form-control"
+                          [(ngModel)]="selectedOrganizations.id"
+                          name="organization_id"
+                          #organizationidRef="ngModel"
+                          [disabled]="this.loggedInUserData.Role.id !=5"
+                          required>
+                            <option  *ngFor="let item of organizations " [ngValue]="item.id">{{item.name}}</option>
+                          </select>
+                          <span *ngIf="newUserForm.submitted && organizationidRef.invalid" class="invalid-form">
+                            <small class="form-text text-danger" *ngIf="organizationidRef.errors.required">{{ 'HEADER.ORGANIZATIONS' | translate }} is required!</small>
+                          </span>
+                        </div>            
+                      </div>
+
+                     <!-- submit button -->
+                      <div class="col-12 d-flex flex-sm-row flex-column mt-2">
+                        <button type="submit" [disabled]="loading" class="btn btn-primary mr-1" (click)="submit(newUserForm)" rippleEffect>
+                          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>{{ 'HEADER.ADD' | translate }}</button>
+                          <button
+                          type="reset"
+                          class="btn btn-outline-secondary"
+                          (click)="cancel('new-user-sidebar')"
+                          rippleEffect>{{ 'HEADER.CANCEL' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                  <!-- users edit account form ends -->
+                </div>
+                <!-- Account Tab ends -->
+              </ng-template>
+          </ul>
+          <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        </div>
+      </div>
+    </section>
+    <!-- users edit ends -->
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

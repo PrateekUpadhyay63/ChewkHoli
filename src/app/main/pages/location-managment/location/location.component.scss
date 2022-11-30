@@ -1,0 +1,40 @@
+@import '@core/scss/angular/libs/date-time-picker.component.scss';
+@import '@core/scss/angular/libs/flatpickr.component.scss';
+
+
+.drop-down{
+    // margin: 10px;
+    padding-bottom: 10px;
+}
+
+.map_container{
+    margin: 5px;
+    margin-left: 25px;
+    margin-top: 0px;
+    margin-right: 20px;
+    padding-bottom: 25px;
+    .map{
+      
+        .mapboxgl-canvas{
+            width: 100% !important;  
+            height: 100% !important;
+        }
+    }
+    .map-wrap{
+        // margin: 5px;
+        height: calc(95vh - 100px) !important;  
+
+    }
+    #buttons-marker {
+        width: 100vh;
+        margin: 0 auto;
+        padding-top: 10px !important;
+      }
+    
+}
+
+.text {
+    padding-right: 15px;
+    font-size: 1rem;
+}
+

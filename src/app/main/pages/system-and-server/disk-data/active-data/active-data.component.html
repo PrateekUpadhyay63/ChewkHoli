@@ -1,0 +1,77 @@
+<div style="margin: 10px; padding-bottom: 10px">
+  <span style="cursor: pointer" (click)="onChartDataRefresh()">
+    <i [size]="25" [data-feather]="'rotate-cw'"></i>
+  </span>
+</div>
+<div class="main">
+  <div class="row">
+    <!-- Active Group Data -->
+    <div class="col-lg-4 col-12">
+      <div *ngIf="groupChart" class="card">
+        <div style="text-align: center !important">
+          <span class="card-title">Active Group Data</span>
+        </div>
+        <div class="card-body">
+          <div id="groupDataChart">
+            <apx-chart
+              [series]="groupChart.series"
+              [chart]="groupChart.chart"
+              [dataLabels]="groupChart.dataLabels"
+              [plotOptions]="groupChart.plotOptions"
+              [xaxis]="groupChart.xaxis"
+            ></apx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active User Data -->
+    <div class="col-lg-4 col-12">
+      <div *ngIf="userChart" class="card">
+        <div style="text-align: center !important">
+          <span class="card-title">Active User Data</span>
+        </div>
+        <div class="card-body">
+          <div id="userDataChart">
+            <apx-chart
+              [series]="userChart.series"
+              [chart]="userChart.chart"
+              [dataLabels]="userChart.dataLabels"
+              [plotOptions]="userChart.plotOptions"
+              [xaxis]="userChart.xaxis"
+            ></apx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Audio call and Live Stream -->
+    <div class="col-lg-4 col-12">
+      <div class="card">
+        <div style="text-align: center !important">
+          <span class="card-title">Current Audio call and Live Stream</span>
+        </div>
+        <div class="card-body">
+          <div
+            *ngIf="activeCallAndStreamchartOptions; else noData"
+            id="activeCallAndStreaming"
+          >
+            <apx-chart
+              [series]="activeCallAndStreamchartOptions.series"
+              [chart]="activeCallAndStreamchartOptions.chart"
+              [dataLabels]="activeCallAndStreamchartOptions.dataLabels"
+              [plotOptions]="activeCallAndStreamchartOptions.plotOptions"
+              [xaxis]="activeCallAndStreamchartOptions.xaxis"
+              [stroke]="activeCallAndStreamchartOptions.stroke"
+            ></apx-chart>
+          </div>
+          <ng-template #noData>
+            <h1 style="text-align: center; padding-top: 100px">
+              No Records found
+            </h1>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

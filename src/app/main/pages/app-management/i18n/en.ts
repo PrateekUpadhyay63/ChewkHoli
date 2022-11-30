@@ -1,0 +1,25 @@
+export const locale = {
+  lang: "en",
+  data: {
+    HEADER: {
+      OSTYPE: "OS Type",
+      APPVERSION: "App Version",
+      UPDATEDAT: "Updated At",
+      ACTION: "Action",
+      UPDATEANDROIDFILE: "Update Android App File",
+      UPDATEIOSFILE: "Update IOS App File",
+      VERSION: "Version",
+      VERSIONISREQUIRED: "Version is required",
+      ENTERVERSION: "Enter Version",
+      UPLOADAPKEFILE: "Upload .apk File",
+      UPLOADIOSFILE: "Upload .ipa File",
+      CHOOSEFILE: "Choose file",
+      FILESIZELIMIT: "File size should be less then 1 GB",
+      PATTERNERROR: 'Invalid version format.',
+      VERSIONMAXLENGTH: 'Application version should not be more then 5 number',
+      APPLICATIONFILE: "Application file required",
+      UPDATE: "Update",
+      CANCEL: "Cancel",
+    },
+  },
+};

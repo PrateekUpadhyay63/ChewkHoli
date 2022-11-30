@@ -1,0 +1,199 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- User List -->
+    <section class="users-list-wrapper">
+      <div class="card">
+        <div class="row m-1 totals">
+          <h3>
+            {{ "HEADER.TOTALUSERS" | translate }}:
+            {{ userGroupCount?.total_users }}
+          </h3>
+          <h3>
+            {{ "HEADER.TOTALGROUPS" | translate }}:
+            {{ userGroupCount?.total_groups }}
+          </h3>
+        </div>
+        <div class="row d-flex m-1">
+          <div class="col-md-4 col-4">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="roleData"
+                [clearable]="true"
+                name="selectedRole"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.USERTYPE' | translate }}"
+                (change)="filterByRole($event)"
+                (clear)="onFilterClear()"
+              >
+              </ng-select>
+            </fieldset>
+          </div>
+
+          <div class="col-md-4 col-4">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="statusData"
+                name="selectedStatus"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.STATUS' | translate }}"
+                (change)="filterByStatus($event)"
+                (clear)="onFilterClear()"
+              >
+              </ng-select>
+            </fieldset>
+          </div>
+
+          <div class="col-md-4 col-4">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="groupData"
+                name="selectedGroup"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.GROUPS' | translate }}"
+                (change)="filterByGroup($event)"
+                (clear)="onFilterClear()"
+              >
+              </ng-select>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <ngx-datatable
+          [rows]="rows"
+          [rowHeight]="50"
+          class="bootstrap core-bootstrap"
+          [limit]="selectedOption"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+          [count]="page.limit"
+          [offset]="page.offset"
+          [limit]="page.limit"
+        >
+          <ngx-datatable-column
+            name="{{ 'HEADER.GROUPNAME' | translate }}"
+            prop="group_name"
+            [width]="120"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 10 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.STATUS' | translate }}"
+            prop="statusId"
+            [width]="60"
+          >
+            <ng-template let-status="value" ngx-datatable-cell-template>
+              <div
+                class="badge badge-pill"
+                [ngClass]="{
+                  'badge-light-warning': status == 1,
+                  'badge-light-success': status == 2,
+                  'badge-light-danger': status == 3
+                }"
+              >
+                <span *ngIf="status == 1">Pending</span>
+                <span *ngIf="status == 2">Active</span>
+                <span *ngIf="status == 3">In-active</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.USERTYPE' | translate }}"
+            prop="role_name"
+            [width]="120"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 10 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.USERNAME' | translate }}"
+            prop="name"
+            [width]="180"
+          >
+            <ng-template
+              let-row="row"
+              let-value="value"
+              ngx-datatable-cell-template
+            >
+              <div class="d-flex align-items-center">
+                <div class="cell-line-height">
+                  <!-- <span class="font-weight-bold">{{ value | titlecase |truncate:15 }}</span> -->
+                  <span>{{
+                    row.name.length > 12
+                      ? (row.name | slice: 0:14) + ".."
+                      : row.name
+                  }}</span>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.LANGUAGE' | translate }}"
+            prop="language"
+            [width]="120"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 10 }}
+            </ng-template>
+          </ngx-datatable-column>
+          <!-- <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="1"
+            [size]="page.limit"
+            [count]="page.limit"          >
+          </datatable-pager> -->
+        </ngx-datatable>
+
+        <div class="pagination mb-2">
+          <ul class="pager">
+            <i
+              *ngIf="current_page > 1"
+              class="datatable-icon-left"
+              (click)="pagePrev()"
+            ></i>
+            <ng-container *ngFor="let pages of fakeArray; let p = index">
+              <ng-container *ngIf="p + 1 > pageIfy && p + 1 <= pageIfx">
+                <li
+                  class="numbers"
+                  [ngClass]="
+                    p + 1 == current_page ? 'numbers-active' : 'numbers'
+                  "
+                  (click)="pagination(p + 1)"
+                >
+                  {{ p + 1 }} &nbsp;
+                </li>
+              </ng-container>
+            </ng-container>
+            <i
+              *ngIf="current_page < page.count"
+              class="datatable-icon-right"
+              (click)="pageNext()"
+            ></i>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 0 3 5-->
+      <!-- <div class="pagination mb-2">
+        <ul class="pager">
+          <i class="datatable-icon-left" (click)="pagePrev()"></i>
+          <li class="numbers" [ngClass]="p+1 == current_page ? 'numbers-active' : 'numbers'"
+          *ngFor="let pages of fakeArray; let p = index" (click)="pagination(p+1)">{{p+1}} &nbsp;</li>
+          <i class="datatable-icon-right" (click)="pageNext()"></i>
+        </ul>
+      </div> -->
+    </section>
+  </div>
+</div>

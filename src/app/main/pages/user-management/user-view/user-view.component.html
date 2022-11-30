@@ -1,0 +1,180 @@
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+      <!-- users edit start -->
+      <section class="app-user-edit">
+        <div class="card">
+          <div class="card-body">
+            <ul ngbNav #nav="ngbNav" class="nav nav-pills">
+              <li ngbNavItem >
+                <a ngbNavLink class="d-flex align-items-center">
+                  <i   data-feather="user" class="mr-sm-50"></i><span class="d-none d-sm-block">{{ 'HEADER.VIEWUSERDETAILS' | translate}}</span>
+                  </a>
+                <ng-template ngbNavContent>
+                  <!-- Account Tab starts -->
+                  <div class="tab-pane active" id="account" aria-labelledby="account-tab" role="tabpanel">   
+
+                    <!-- users edit account form start -->
+                      <div class="rows">
+                        <div class="form-group" style="padding-left: 20px;">
+                         <!-- users edit media object start -->
+                  <label for="username">{{ 'HEADER.PROFILEIMAGE' | translate }}</label>
+                  <div class="media mb-2">
+                    <!-- <div  > -->
+                    <div  *ngIf="avatarImage !== null && avatarImage !== ''; else customAvatar">
+                      <img
+                        class="user-avatar users-avatar-shadow rounded mr-2 my-25 cursor-pointer"
+                        [src]="avatarImage | secure | async"
+                        height="90"
+                        width="90"
+                        alt="User avatar"
+                      />
+                    </div>
+                    <ng-template #customAvatar>
+                      <div class="avatar rounded mr-2 my-25 bg-light-danger avatar-xl">
+                        <span class="avatar-content"> {{currentRow.first_name | slice:0:1 |titlecase}}{{currentRow.last_name |slice:0:1 |titlecase}} </span>
+                      </div>
+                      <!-- <img
+                      class="user-avatar users-avatar-shadow rounded mr-2 my-25 cursor-pointer"
+                      src="../../../../../assets/images/avatars/user-avatar-image.jpg"
+                      height="90"
+                      width="90"
+                      alt="User avatar"
+                    /> -->
+                    </ng-template>
+                  </div>
+                        </div>
+
+                        <!-- First Name -->
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="username">{{ 'HEADER.FIRSTNAME' | translate }}</label>
+                            <input
+                                type="text"
+                                id="first_name"
+                                class="form-control"
+                                placeholder="first_name"
+                                name="first_name"
+                                [ngModel]="currentRow.first_name"
+                                readonly
+                                disabled/>
+                          </div>
+                        </div>
+                        <!-- last name -->
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="username">{{ 'HEADER.LASTNAME' | translate }}</label>
+                            <input
+                                type="text"
+                                id="last_name"
+                                class="form-control"
+                                placeholder="last_name"
+                                name="last_name"
+                                [ngModel]="currentRow.last_name"
+                                readonly
+                                disabled
+                              />
+                          </div>
+                        </div>
+                       <!-- Email -->
+                        <div class="col-md-4">
+                          <div class="form-group ">
+                            <label for="email">{{ 'HEADER.EMAIL' | translate }}</label>
+                            <input
+                              type="email"
+                              id="email"
+                              class="form-control"
+                              placeholder="Email"
+                              name="email"
+                              [ngModel]="currentRow.username"
+                              readonly
+                              disabled/>
+                          </div>
+                        </div>
+                     
+                     <!-- status -->
+                     <div class="col-md-6">     
+                        <div class="row" >
+                            <div class="col-md-6"> 
+                                <div class="form-group">
+                                      <label for="status">{{ 'HEADER.STATUS' | translate }}</label>
+                                      <select id="user-status" 
+                                      class="form-control"
+                                      name="status"
+                                     disabled>
+                                  <option>{{currentRow.Status.name}}</option>
+                                  </select>
+                               </div>
+                            </div>   
+                        <!--send mail link  -->
+                            <div *ngIf="currentRow.Status.id == 1 && currentRow.Role.id != 1" class="col-md-6 form-group d-flex align-items-center p-2">
+                                <button type="button" (click)="sendMail()" class="btn btn-flat-danger" >{{ 'HEADER.SENDMAILPASSWORD' | translate }}</button>
+                            </div>   
+                            <div *ngIf="currentRow.Role.id == 1" class="col-md-6 form-group d-flex align-items-center p-2">
+                              <button type="button" (click)="sendMail()" class="btn btn-flat-danger" >{{ 'HEADER.SENDMAILLINK' | translate }}</button>
+                          </div>         
+                        </div>
+                    </div>
+
+                        <!-- User Type -->
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="userType">{{ 'HEADER.USERTYPE' | translate }}</label>
+                            <select id="user_type" class="form-control"
+                            name="role"
+                            readonly
+                            disabled
+                            >
+                            <option  >{{currentRow.Role.name}}</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <!-- User organization -->
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="userType">{{ 'HEADER.ORGANIZATIONS' | translate }}</label>
+                            <select id="organization_id" class="form-control"
+                            name="organization_id"
+                            readonly
+                            disabled
+                            >
+                              <option  >{{currentRow.Organization.name}}</option>
+                            </select>
+                          </div>
+                        </div>
+  
+                            <!-- Language  -->
+                        <div class="col-md-4">
+                          <div class="form-group">
+                           <label class="form-label" 
+                              for="language" >{{ 'HEADER.LANGUAGE' | translate }}</label>
+                              <select id="lanaguage" class="form-control"
+                              name="language"
+                              readonly
+                              disabled>
+                              <option >{{currentRow.Language.name}}</option>
+                              </select>
+                          </div>
+                        </div>
+                      
+                       
+                        <div class="col-12 d-flex flex-sm-row flex-column mt-2">
+                          <button (click)="back()"  class="btn btn-primary mb-1 mb-sm-0 mr-0 mr-sm-1" rippleEffect>
+                            {{ 'HEADER.BACK' | translate }}
+                          </button>
+                        </div>
+                      </div>
+                 
+                    <!-- users edit account form ends -->
+                  </div>
+                  <!-- Account Tab ends -->
+                </ng-template>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+          </div>
+        </div>
+      </section>
+      <!-- users edit ends -->
+    </div>
+  </div>
+  

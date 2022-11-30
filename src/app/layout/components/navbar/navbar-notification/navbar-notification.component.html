@@ -1,0 +1,131 @@
+<li
+  ngbDropdown
+  #myDrop="ngbDropdown"
+  class="nav-item dropdown-notification mr-25"
+>
+  <a
+    (click)="onBellIconClick()"
+    class="nav-link"
+    ngbDropdownToggle
+    id="navbarNotificationDropdown"
+    ><i class="ficon" data-feather="bell"></i>
+    <span
+      [ngClass]="{
+        'badge badge-pill badge-primary badge-up': this.hideHover == true
+      }"
+    >
+      <!-- {{ notifications?.messages?.length}} -->
+    </span>
+  </a>
+  <ul
+    ngbDropdownMenu
+    aria-labelledby="navbarNotificationDropdown"
+    class="dropdown-menu dropdown-menu-media dropdown-menu-right"
+  >
+    <!-- Notifications header -->
+    <li class="dropdown-menu-header">
+      <div class="dropdown-header d-flex">
+        <h4 class="notification-title mb-0 mr-auto">
+          {{ "HEADER.NOTIFICATIONS" | translate }}
+        </h4>
+        <!-- <div class="badge badge-pill badge-light-primary">
+          {{ notifications?.messages?.length }} New
+        </div> -->
+      </div>
+    </li>
+    <!--/ Notifications header -->
+
+    <!-- Notifications content -->
+    <li class="scrollable-container media-list" [perfectScrollbar]>
+      <a
+        class="d-flex"
+        href="javascript:void(0)"
+        *ngFor="let message of notifications"
+      >
+        <div
+          class="media d-flex align-items-start"
+          [ngClass]="{ read: message.is_read == false }"
+        >
+          <div class="media-left">
+            <div
+              *ngIf="
+                message.sender_data.profile_image != null;
+                else elseTemplate
+              "
+              class="avatar"
+            >
+              <img
+                [src]="message.sender_data.profile_image"
+                alt="avatar"
+                width="32"
+                height="32"
+              />
+            </div>
+
+            <ng-template #elseTemplate>
+              <div class="avatar bg-light-primary avatar-lg">
+                <span class="avatar-content">
+                  {{ message.sender_data.first_name | slice: 0:1 | titlecase
+                  }}{{ message.sender_data.last_name | slice: 0:1 | titlecase }}
+                </span>
+              </div>
+            </ng-template>
+          </div>
+          <div
+            class="media-body"
+            (click)="onNotificationClicked(message, myDrop)"
+          >
+            <p class="media-heading" [innerHTML]="message.body"></p>
+            <small class="notification-text">{{ message.title }}</small>
+            <span class="date-1">{{
+              message.updated_at | customDate | date: "dd/MM/yyyy h:mm"
+            }}</span>
+          </div>
+        </div></a
+      >
+    </li>
+    <!--/ Notifications content -->
+
+    <!-- Notifications footer -->
+    <li class="dropdown-menu-footer">
+      <a
+        class="btn btn-primary btn-block"
+        (click)="readAllNotifications(myDrop)"
+        href="javascript:void(0)"
+        >{{ "HEADER.READALLNOTIFICATION" | translate }}</a
+      >
+    </li>
+    <!--/ Notifications footer -->
+  </ul>
+</li>
+
+<!-- confirmation modal -->
+<ng-template #modalConfirm let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Open in new tab</h5>
+    <button
+      type="button"
+      class="close"
+      (click)="modal.dismiss('Cross click')"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body lh-sm text-wrap text-break" tabindex="0" ngbAutofocus>
+    Are you sure you want to open in new Tab
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="openInNewTab()"
+      rippleEffect
+    >
+      Open
+    </button>
+    <button type="button" class="btn btn-info" (click)="cancel()" rippleEffect>
+      Cancel
+    </button>
+  </div>
+</ng-template>

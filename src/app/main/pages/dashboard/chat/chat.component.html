@@ -1,0 +1,375 @@
+<div
+  id="chat-component-id"
+  class="main container-xxl dashboard-group-chat"
+  
+ 
+>
+<!-- [ngClass]="isFullScreen ? 'add-fullscreen' :''" -->
+  <!-- Add class "add-fullscreen" dynamically [ngClass]="isFullScreen ? 'add-fullscreen' :''" -->
+  <!-- <div  class="main container-xxl dashboard-group-chat add-fullscreen"> -->
+  <!-- comment this later for CR -->
+  <!-- <header>  
+    <div class="chat">
+      <div class="row">
+        <div class="col-sm-6">
+          <h1 class="heading">{{'HEADER.MODALTITLE' | translate}}</h1>
+        </div>
+        <div class="col-sm-6 justify-content-end d-flex">
+          <div class="d-flex add-group">
+            <div class="form-inputs">
+              <input
+                class="form-control"
+                type="text"
+                [(ngModel)]="searchValue"
+                (keyup)="filterUpdate($event)"
+                placeholder="{{'HEADER.SEARCHBYGROUPNAME' | translate}}"
+              />
+              <div class="icon">
+                <img src="../../../../../assets/images/icons/search.svg" />
+              </div>
+              <div class="close_icon">
+                <button
+                  type="button"
+                  placement="bottom"
+                  ngbTooltip="Clear"
+                  *ngIf="searchValue.length > 0"
+                  (click)="onSearchClear()"
+                  class="btn bg-transparent onSearch"
+                >
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <button (click)="addNewGroup()" class="btn btn-primary">
+              {{'HEADER.ADDGROUP' | translate}}            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>  -->
+  <div class="d-flex max-height">
+    <div class="icons">
+      <div class="" *ngFor="let groups of usersGroupList; let i = index">
+        <div
+          class="side"
+          [class.active]="groups.active"
+          (click)="GroupChat(groups)"
+        >
+          <div placement="right" ngbTooltip="{{ groups.name }}" class="avatar">
+            <span *ngIf=" groups.image != null &&  groups.image != ''; else elseTemplate">
+              <img
+                src="{{groups.image |secure |async}}"
+                width="46px"
+                height="46px"
+            /></span>
+            <ng-template #elseTemplate>
+              <span>
+              <img
+                src="../../../../../assets/images/avatars/group-image-placeholder.jpg"
+                width="46px"
+                height="46px"
+            /></span>
+            </ng-template>
+            
+            <div class="error" [ngStyle]="alertFunc(groups.alert_level)">
+              <span>{{ i + 1 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main w-100">
+      <div class="d-flex justify-content-center align-items-center">
+      <h1 class="text-center" style="position: absolute; top:10%; color: #7367f0; ">Welcome to Dashboard</h1>
+      </div>
+
+      
+
+      <!-- <div class="div">
+        <div class="text">
+          <div class="title">
+            <h2>
+              {{
+                selectedChat?.name.length > 12
+                  ? (selectedChat?.name | slice: 0:15) + "..."
+                  : selectedChat?.name
+              }}
+            </h2>
+          </div>
+          <div class="dot" *ngIf="selectedChat?.name">
+            <img
+              src="../../../../../assets/images/icons/dots.svg"
+              type="button"
+              id="dropdownMenuButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            />
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" (click)="openModal(modalAlert)">{{
+                "HEADER.GROUPALERTLEVEL" | translate
+              }}</a>
+            </div>
+          </div>
+        </div>
+        <div class="button">
+          <div
+            class="pin-drop-btn"
+            *ngIf="selectedChat"
+            class="custom-control custom-control-success custom-switch"
+          >
+            <label class="mb-50" class="text-pin">
+              {{ "HEADER.PINDROP" | translate }}</label
+            >
+            <input
+              type="checkbox"
+              (change)="onSwitchChange($event)"
+              class="custom-control-input"
+              id="customSwitch4"
+            />
+            <label class="custom-control-label" for="customSwitch4"></label>
+          </div>
+          <button
+            class="btn btn-outline-primary"
+            (click)="ipstreamModal(modalIpstream)"
+          >
+            {{ "HEADER.IPSTREAMS" | translate }}
+          </button>
+          <button
+            class="btn btn-outline-primary"
+            *ngIf="selectedChat"
+            (click)="viewstreamModal(modalViewstream)"
+          >
+            {{ "HEADER.VIEWSTREAMS" | translate }}
+          </button>
+          <button
+            class="btn btn-outline-primary"
+            *ngIf="selectedChat"
+            (click)="toggleSidebar('conference')"
+          >
+            <span *ngIf="selectedChat.is_call_active">
+              {{ "HEADER.JOINCALL" | translate }}</span
+            >
+            <span *ngIf="!selectedChat.is_call_active">
+              {{ "HEADER.STARTCALL" | translate }}</span
+            >
+          </button>
+          <div class="expand cursor" (click)="onFullscreen()">
+            <img
+              placement="left"
+              ngbTooltip="{{ title ? 'Full Screen' : 'Exit Full Screen' }}"
+              src="../../../../../assets/images/icons/expand.svg"
+            />
+          </div>
+        </div>
+      </div> -->
+      <div class="content-area-wrapper p-0" *ngIf="groupClicked">
+        <div
+          class="mapDiv"
+          *ngIf="memberLocationData"
+          [ngClass]="{
+            marginleft: mapdivmargin,
+            marginleft0: !mapdivmargin,
+            marginright: mapdivRightmargin,
+            marginright0: !mapdivRightmargin
+          }"
+          style="width: 100%"
+        >
+          <app-map [memberLocation]="memberLocationData" [position]="position"></app-map>
+        </div>
+        <div class="sidebar-left">
+          <core-sidebar
+            class="sidebar-content"
+            name="chat-sidebar"
+            overlayClass="body-content-overlay"
+            collapsibleSidebar="bs-gt-lg"
+          >
+            <app-chat-sidebar [selectedChat]="selectedChat"></app-chat-sidebar>
+          </core-sidebar>
+
+          <core-sidebar
+            class="chat-profile-sidebar"
+            name="chat-user-sidebar"
+            overlayClass="body-content-overlay"
+          >
+            <div class="content-body">
+              <app-chat-user-sidebar></app-chat-user-sidebar>
+            </div>
+          </core-sidebar>
+        </div>
+
+        <div class="custom-right">
+          <core-sidebar
+            class="user-profile-sidebar"
+            name="chat-active-sidebar"
+            overlayClass="body-content-overlay"
+          >
+            <app-chat-active-sidebar
+              [selectedChat]="selectedChat"
+            ></app-chat-active-sidebar>
+          </core-sidebar>
+          <div class="content-wrapper container-xxl p-0">
+            <div class="content-body">
+              <app-chat-content></app-chat-content>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IP Stream modal -->
+<ng-template #modalIpstream let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="myModalLabel1">
+      {{ "HEADER.IPSTREAMS" | translate }}
+    </h4>
+    <button type="button" class="close" (click)="cancel()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="mb-2" *ngFor="let IPstreams of ipStreamListData">
+      <div class="card-body cardBgColor">
+        <div class="row" (click)="openVideo(IPstreams.rts_link)">
+          <div class="col-3 col-sm-3 col-md-3">
+            <div class="imgbox">
+              <img src="{{ IPstreams.icon | secure | async }}" alt="" />
+            </div>
+          </div>
+          <div class="col-6 col-sm-9 col-md-9">
+            <div class="rightdiv">
+              <div class="name">{{ IPstreams.name }}</div>
+              <div class="dflex">
+                <div class="startedtime">
+                  Installed:
+                  {{ IPstreams.created_at | date: "shortDate" }}
+                </div>
+                <div class="time">
+                  Updated @ {{ IPstreams.updated_at | date: "short" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="pagination mb-2">
+      <ul class="pager">
+        <i
+          *ngIf="current_page > 1"
+          class="datatable-icon-left"
+          (click)="pagePrev()"
+        ></i>
+        <ng-container *ngFor="let pages of fakeArray; let p = index">
+          <ng-container *ngIf="p + 1 > pageIfy && p + 1 <= pageIfx">
+            <li
+              class="numbers"
+              [ngClass]="p + 1 == current_page ? 'numbers-active' : 'numbers'"
+              (click)="pagination(p + 1)"
+            >
+              {{ p + 1 }} &nbsp;
+            </li>
+          </ng-container>
+        </ng-container>
+        <i
+          *ngIf="current_page < page.count"
+          class="datatable-icon-right"
+          (click)="pageNext()"
+        ></i>
+      </ul>
+    </div>
+  </div>
+</ng-template>
+
+<!-- View Streams Modal  -->
+<ng-template #modalViewstream let-modal>
+  <div class="modal-header">
+    <button
+      type="button"
+      class="close closebutton"
+      (click)="cancel()"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body" tabindex="0">
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <h1
+            *ngIf="getLiveStreams.length"
+            style="text-align: center"
+            class="mt-2 mb-2"
+          >
+            {{ "HEADER.VIEWSTREAMS" | translate }}
+          </h1>
+          <h3
+            *ngIf="!getLiveStreams.length"
+            style="text-align: center"
+            class="mt-2 mb-2"
+          >
+            No Live Streaming Available
+          </h3>
+
+          <div class="">
+            <div class="">
+              <div class="mb-2" *ngFor="let viewStreams of getLiveStreams">
+                <div
+                  class="card-body cardBgColor cursor"
+                  (click)="getCurrentVideo(viewStreams)"
+                >
+                  <div class="row">
+                    <div class="col-3 col-sm-3 col-md-3">
+                      <div class="imgbox">
+                        <img
+                          src="{{
+                            viewStreams.profile_image
+                              ? viewStreams.profile_image
+                              : '../../../../../assets/images/avatars/group-image-placeholder.jpg'
+                          }}"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-6 col-sm-9 col-md-9">
+                      <div class="rightdiv">
+                        <div class="name">
+                          {{ viewStreams.first_name || "Dummy" }}
+                        </div>
+                        <div class="dflex">
+                          <div class="time">
+                            {{ viewStreams.createdAt | date: "shortTime" }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer"></div>
+  <div class=""></div>
+</ng-template>
+
+<!-- conference call component -->
+<!-- <core-sidebar
+  *ngIf="conferenceCallClicked"
+  class="modal modal-slide-in sidebar-todo-modal fade"
+  name="conference"
+  overlayClass="modal-backdrop"
+>
+  <app-conference-call [selectedChat]="selectedGroup"></app-conference-call>
+</core-sidebar> -->
+
+<!--/  conference call component -->

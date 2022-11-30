@@ -1,0 +1,403 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- User List -->
+    <section class="users-list-wrapper">
+      <div class="card">
+        <div class="row  m-1">
+          <div class="col-md-2 col-2">
+            <div class="input-group search-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="{{ 'HEADER.SEARCHBYNAME' | translate }}"
+                ngbTooltip="{{ 'HEADER.SEARCHBYNAME' | translate }}"
+                [(ngModel)]="searchValue"
+                (keyup)="nameUpdate($event)"
+              />
+              <button
+                type="button"
+                *ngIf="searchValue.length > 0"
+                (click)="onSearchClear()"
+                class="btn bg-transparent onSearch"
+              >
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-2 col-2">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="resorg"
+                [(ngModel)]="selectedOrganizationName"
+                [clearable]="true"
+                name="selectedOrganizationName"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.SEARCHORG' | translate }}"
+                ngbTooltip="{{ 'HEADER.SEARCHORG' | translate }}"
+                (change)="filterOrganization($event)"
+                (clear)="onFilterClear()"
+              ></ng-select>
+            </fieldset>
+            <!-- {{selectRole|async|json}} -->
+          </div>
+
+          <div class="col-md-2 col-2">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="resRoles"
+                [(ngModel)]="selectedRole"
+                [clearable]="true"
+                name="selectedRole"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.SELECTROLE' | translate }}"
+                ngbTooltip="{{ 'HEADER.SELECTROLE' | translate }}"
+                (change)="filterByRole($event)"
+                (clear)="onFilterClear()"
+              >
+              </ng-select>
+            </fieldset>
+            <!-- {{selectRole|async|json}} -->
+          </div>
+
+          <div class="col-2 col-md-2">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="selectFileType"
+                [(ngModel)]="selectedFileType"
+                name="selecteFileType"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.EXPORTFILE' | translate }}"
+                ngbTooltip="{{ 'HEADER.EXPORTFILE' | translate }}"
+                (change)="filterFileType($event)"
+              ></ng-select>
+            </fieldset>
+          </div>
+
+          <div class="col-md-2 col-2">
+            <fieldset class="form-group">
+              <ng-select
+                [items]="ressta"
+                [(ngModel)]="selectedStatus"
+                name="selectedStatus"
+                bindLabel="name"
+                placeholder="{{ 'HEADER.SELECTSTATUS' | translate }}"
+                ngbTooltip="{{ 'HEADER.SELECTSTATUS' | translate }}"
+                (change)="filterByStatus($event)"
+                (clear)="onFilterClear()"
+              ></ng-select>
+            </fieldset>
+          </div>
+
+          <div class="col-md-2 col-2">
+            <div *ngIf="canAddUser">
+              <button
+                class="btn btn-primary"
+                rippleEffect
+                (click)="addNweUser()"
+              >
+                <span class="d-none d-sm-inline-block">{{
+                  "HEADER.ADDNEWUSER" | translate
+                }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- <ngx-datatable
+          [rows]="rows"
+          class="bootstrap core-bootstrap table table-striped"
+          [columnMode]="ColumnMode.force"
+          [rowHeight]="'auto'"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+          
+          [count]="page.limit"
+          [offset]="page.offset"
+          [limit]="page.limit"
+        > -->
+
+        <ngx-datatable [rows]="rows" [rowHeight]="50" class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force"
+        [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true"
+        [count]="page.limit" [offset]="page.offset" [limit]="page.limit" >
+          <ngx-datatable-column
+            name="{{ 'HEADER.NAME' | translate }}"
+            prop="name"
+            [width]="180"
+          >
+            <ng-template
+              let-row="row"
+              let-value="value"
+              ngx-datatable-cell-template
+            >
+              <div class="d-flex align-items-center">
+                <div class="cell-line-height">
+                  <!-- <span class="font-weight-bold">{{ value | titlecase |truncate:15 }}</span> -->
+                  <span>{{
+                    row.name.length > 12
+                      ? (row.name | slice: 0:14) + ".."
+                      : row.name
+                  }}</span>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.STATUS' | translate }}"
+            prop="Status.id"
+            [width]="60"
+          >
+            <ng-template let-status="value" ngx-datatable-cell-template>
+              <div
+                class="badge badge-pill"
+                [ngClass]="{
+                  'badge-light-warning': status == 1,
+                  'badge-light-success': status == 2,
+                  'badge-light-danger': status == 3
+                }"
+              >
+                <span *ngIf="status == 1">Pending</span>
+                <span *ngIf="status == 2">Active</span>
+                <span *ngIf="status == 3">In-active</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.USERTYPE' | translate }}"
+            prop="Role.name"
+            [width]="120"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 10 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ORGANIZATIONNAME' | translate }}"
+            prop="Organization.name"
+            [width]="150"
+            *ngIf="currentLoggedInUser.Role.id == 5"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | truncate: 12 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ADDEDTIME' | translate }}"
+            prop="created_at"
+            [width]="150"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.UPDATETIME' | translate }}"
+            prop="updated_at"
+            [width]="150"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+          
+          <ngx-datatable-column
+            name="{{ 'HEADER.ACTIONS' | translate }}"
+            [width]="60"
+            [sortable]="false"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div ngbDropdown container="body">
+                <button
+                  ngbDropdownToggle
+                  type="button"
+                  class="btn icon-btn btn-sm hide-arrow"
+                  rippleEffect
+                >
+                  <span
+                    [data-feather]="'more-vertical'"
+                    [class]="'cursor-pointer'"
+                  ></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <a
+                    *ngIf="canViewUser"
+                    routerLink="/user-management/user-view/{{ row.id }}"
+                    ngbDropdownItem
+                    ><span
+                      [data-feather]="'file-text'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.VIEW" | translate }}</a
+                  ><span
+                    *ngIf="canEditUser"
+                    (click)="editUser(row.id)"
+                    routerLink="/user-management/user-edit/{{ row.id }}"
+                    ngbDropdownItem
+                    ><span
+                      [data-feather]="'edit'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.EDIT" | translate }}</span
+                  ><span
+                    *ngIf="canDeleteUser"
+                    href=""
+                    ngbDropdownItem
+                    (click)="
+                      modalOpenDanger(
+                        modalDanger,
+                        row.id,
+                        row.first_name,
+                        row.last_name
+                      )
+                    "
+                    ><span
+                      [data-feather]="'trash'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.DELETE" | translate }}</span
+                  >
+                  <a
+                    routerLink="/user-management/user-activity/{{ row.id }}"
+                    ngbDropdownItem
+                    ><span
+                      [data-feather]="'file-text'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.ACTIVITY" | translate }}</a
+                  >
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- <ngx-datatable-footer>
+            <ng-template 
+              ngx-datatable-footer-template
+              let-rowCount="rowCount"
+              let-pageSize="pageSize"
+              let-selectedCount="2"
+              let-curPage="curPage"
+              let-offset="offset"
+              let-isVisible="isVisible">
+                <div class="page-count">
+                  <span>
+                    2/ 
+                  </span>
+                  3
+                </div>
+                <datatable-pager
+                    [pagerLeftArrowIcon]="'datatable-icon-left'"
+                    [pagerRightArrowIcon]="'datatable-icon-right'"
+                    [pagerPreviousIcon]="'datatable-icon-prev'"
+                    [pagerNextIcon]="'datatable-icon-skip'"
+                    [page]="curPage"
+                    [size]="pageSize"
+                    [count]="rowCount"
+                    [hidden]="!((rowCount / pageSize) > 1)"
+                    (change)="table.onFooterPage($event)">
+                </datatable-pager>
+            </ng-template>
+          </ngx-datatable-footer> -->
+          <!-- <div class="paginaiton-list">
+            <p class='leftpagination' *ngIf="total > 0">Showing 1 to 2 of 8 entries</p>
+  
+            <div class="paginationclass">
+              <pagination-controls (pageChange)="getPage($event)" id="server"></pagination-controls>
+            </div>
+          </div> -->
+          <!-- <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="1"
+            [size]="page.limit"
+            [count]="page.count"
+            
+          >
+          </datatable-pager> -->
+        </ngx-datatable>
+
+
+        <div class="pagination mb-2" *ngIf="rows?.length">
+          <ul class="pager">
+            <i *ngIf="current_page > 1" class="datatable-icon-left" (click)="pagePrev()"></i>
+            <ng-container *ngFor="let pages of fakeArray; let p = index">
+              <ng-container *ngIf="(p+1 > pageIfy) && (p+1 <= pageIfx)">
+                <li class="numbers" [ngClass]="p + 1 == current_page ? 'numbers-active' : 'numbers'" (click)="pagination(p + 1)">
+                  {{ p + 1 }} &nbsp;
+                </li>
+              </ng-container>
+            </ng-container>
+            <i *ngIf="current_page < page.count" class="datatable-icon-right" (click)="pageNext()"></i>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!--/ User List -->
+  </div>
+
+  <!-- New User Sidebar -->
+  <!-- <core-sidebar
+      class="modal modal-slide-in sidebar-todo-modal fade"
+      name="new-user-sidebar"
+      overlayClass="modal-backdrop"
+    >
+      <app-add-user></app-add-user>
+    </core-sidebar> -->
+  <!--/ New User Sidebar -->
+
+  <!-- Modal -->
+  <ng-template #modalDanger let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">
+        {{ "HEADER.DELETEUSER" | translate }}
+      </h5>
+      <button
+        type="button"
+        class="close"
+        (click)="modal.dismiss('Cross click')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div
+      class="modal-body lh-sm text-wrap text-break"
+      tabindex="0"
+      ngbAutofocus
+    >
+      {{ "HEADER.DELETEMODALMSG" | translate }}
+      {{ userName | titlecase }} &nbsp;?
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="deleteUser(deleterUserId)"
+        rippleEffect
+      >
+        {{ "HEADER.DELETE" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-info"
+        (click)="modal.close('Accept click')"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }}
+      </button>
+    </div>
+  </ng-template>
+  <!-- / Modal -->
+</div>

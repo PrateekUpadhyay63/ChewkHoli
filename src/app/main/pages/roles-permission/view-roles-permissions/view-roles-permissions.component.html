@@ -1,0 +1,109 @@
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+      <!-- users edit start -->
+      <section class="app-user-edit">
+        <div class="card">
+          <div class="card-body">
+            <ul ngbNav #nav="ngbNav" class="nav nav-pills">
+              <li ngbNavItem>
+                <a ngbNavLink class="d-flex align-items-center"
+                  ><i data-feather="user" class="mr-sm-50"></i><span class="d-none d-sm-block">{{ 'HEADER.VIEWROLEPERMISSION' | translate }}</span></a
+                >
+                <ng-template ngbNavContent>
+                  <!-- Account Tab starts -->
+                  <div class="tab-pane active" id="account" aria-labelledby="account-tab" role="tabpanel">
+                    <form class="form-validate">
+                    <!-- role name -->
+                    <div class="row mt-1">
+                        <div class="col-12">
+                            <h4 class="mb-1">
+                              <i data-feather="user" [size]="16" class="mr-75 font-medium-4"></i>
+                              <span class="align-middle">{{ 'HEADER.ROLENAME' | translate }} : {{rolePermissionData?.rolesDetails?.name}} </span>
+                            </h4>
+                          </div>
+                    </div>
+                <!-- permission table -->
+                <ng-container *ngIf="this.rolePermissionData.rolesDetails.permissions !== null; else elseTemplate">
+                    <div class="table-responsive border rounded mt-1"  >
+                      <h6 class="py-1 mx-1 mb-0 font-medium-2">
+                        <i data-feather="lock" [size]="20" class="mr-25"></i>
+                        <span class="align-middle">{{ 'HEADER.PERMISSION' | translate }}</span>
+                      </h6>
+                      <p class="card-text ml-2">{{ 'HEADER.PERMISSIONACCORDING' | translate }}</p>
+                      <table class="table table-striped table-borderless" >
+                        <thead class="thead-light">
+                          <tr>
+                            <th>{{ 'HEADER.MODULE' | translate }}</th>
+                            <th>{{ 'HEADER.VIEW' | translate }}</th>
+                            <th>{{ 'HEADER.ADD' | translate }}</th>
+                            <th>{{ 'HEADER.EDIT' | translate }}</th>
+                            <th>{{ 'HEADER.DELETE' | translate }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let item of rolePermissionData?.rolesDetails?.permissions; index as i;">
+                            <td >{{item.Permission.name}}</td>
+                            <td >
+                              <div  class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"  id="{{item.name }}_view"  
+                                [checked]="item.view"  disabled
+                                />
+                                <label class="custom-control-label" for="{{item.name}}_view"></label>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="{{item.name}}_add"
+                                [checked]="item.add" disabled/>
+                                <label class="custom-control-label" for="{{item.name}}_add"></label>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="{{item.name}}_edit"
+                                [checked]="item.edit" disabled/>
+                                <label class="custom-control-label" for="{{item.name}}_edit"></label>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"  id="{{item.name}}_delete"
+                                [checked]="item.delete" disabled />
+                                <label class="custom-control-label"   for="{{item.name}}_delete"></label>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                 <!-- table end -->
+                </ng-container>
+                <ng-template #elseTemplate>
+                  <span> {{ 'HEADER.NOPERMISSION' | translate }}</span>
+                </ng-template>
+                 <!-- buttons -->
+                 <div class="col-12 d-flex flex-sm-row flex-column mt-2">
+                    <button
+                      type="submit"
+                      (click)="back()"
+                      class="btn btn-primary mb-1 mb-sm-0 mr-0 mr-sm-1"
+                      rippleEffect
+                    >
+                    {{ 'HEADER.BACK' | translate }}
+                    </button>
+                  </div>
+                 <!-- /buttons -->
+                    </form>
+                    <!-- users edit account form ends -->
+                  </div>
+                  <!-- Account Tab ends -->
+                </ng-template>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+          </div>
+        </div>
+      </section>
+      <!-- users edit ends -->
+    </div>
+  </div>
+ 

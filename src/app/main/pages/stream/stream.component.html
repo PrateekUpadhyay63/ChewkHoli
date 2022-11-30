@@ -1,0 +1,29 @@
+<ul ngbNav #navFilled="ngbNav" [(activeId)]="activeId" (navChange)="onNavChange($event)" class="nav-tabs nav-fill">
+    <li [ngbNavItem]="1">
+        <a ngbNavLink> <span [data-feather]="'settings'"></span>{{ 'HEADER.SETTINGS' | translate }}
+        </a>
+        <ng-template ngbNavContent>
+            <app-settings></app-settings>
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="2">
+        <a ngbNavLink><span [data-feather]="'play'"></span>
+            <!-- Live -->
+            {{ 'HEADER.LIVE' | translate }}
+        </a>
+        <ng-template ngbNavContent>
+            <app-live></app-live>
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="3">
+        <a ngbNavLink><span [data-feather]="'camera'"></span>
+            <!-- Recordings -->
+            {{ 'HEADER.RECORDINGS' | translate }}
+        </a>
+        <ng-template ngbNavContent>
+            <app-recordings></app-recordings>
+        </ng-template>
+    </li>
+</ul>
+
+<div [ngbNavOutlet]="navFilled" class="mt-2"></div>

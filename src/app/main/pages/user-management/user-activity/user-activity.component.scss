@@ -1,0 +1,14 @@
+@import '@core/scss/base/bootstrap-extended/_include'; 
+
+.flex{
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-content ::before{
+    width: 410px;
+}
+
+.modal-content{
+    width: 410px !important;
+}

@@ -1,0 +1,63 @@
+<div class="card">
+
+<div class="content-area-wrapper container-xxl p-0">
+  <!-- sidebar Left -->
+  <!-- <core-sidebar
+    class="sidebar-left"
+    name="email-sidebar"
+    overlayClass="body-content-overlay"
+    collapsibleSidebar="bs-gt-lg"
+  >
+    <app-email-sidebar></app-email-sidebar>
+  </core-sidebar> -->
+
+  <!--/ sidebar Left -->
+
+  <!-- content-right -->
+  <div class="full-content w-100">
+    <!-- <app-email-compose></app-email-compose> -->
+    <div class="content-wrapper container-xxl p-0">
+      <div class="content-body">
+        <!-- email list -->
+        <app-email-list></app-email-list>
+        <!-- email list -->
+        
+        <!-- email details -->
+        <!-- <app-email-details></app-email-details> -->
+        <!-- email details -->
+      </div>
+    </div>
+  </div>
+
+  <!--/ content-right -->
+</div>
+
+<!-- <div class="d-flex justify-content-end mt-2">
+  <div class="pagination mb-2">
+    <ul class="pager">
+      <i class="datatable-icon-left" (click)="pagePrev()"></i>
+      <li class="numbers" [ngClass]="p+1 == current_page ? 'numbers-active' : 'numbers'"
+      *ngFor="let pages of totalPages; let p = index" (click)="pagination(p+1)">{{p+1}} &nbsp;</li>
+      <i class="datatable-icon-right" (click)="pageNext()"></i>
+    </ul>
+  </div> -->
+
+  <div class="pagination mb-2 ">
+    <ul class="pager">
+      <i *ngIf="current_page > 1" class="datatable-icon-left" (click)="pagePrev()"></i>
+      <ng-container *ngFor="let pages of fakeArray; let p = index">
+        <ng-container *ngIf="(p+1 > pageIfy) && (p+1 <= pageIfx)">
+          <li class="numbers" [ngClass]="p + 1 == current_page ? 'numbers-active' : 'numbers'" (click)="pagination(p + 1)">
+            {{ p + 1 }} &nbsp;
+          </li>
+        </ng-container>
+      </ng-container>
+      <i *ngIf="current_page < page.count" class="datatable-icon-right" (click)="pageNext()"></i>
+    </ul>
+  </div>
+
+
+  
+
+<!-- </div> -->
+</div>

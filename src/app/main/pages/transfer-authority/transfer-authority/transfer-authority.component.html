@@ -1,0 +1,188 @@
+
+
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+      <!-- users edit start -->
+      <section class="app-user-add">
+        <div class="card">
+          <div class="card-body">
+            <ul ngbNav #nav="ngbNav" class="nav nav-pills">
+              <li ngbNavItem>
+                <a ngbNavLink class="d-flex align-items-center"
+                  ><i data-feather="repeat" class="mr-sm-50"></i><span class="d-none d-sm-block">{{ 'HEADER.MODALTITLE' | translate }}</span></a
+                ><br>
+                <ng-template ngbNavContent>
+                  <!-- Account Tab starts -->
+                  <div class="tab-pane active" id="account" aria-labelledby="account-tab" role="tabpanel">
+                    <form [formGroup]="TransferAuthorityForm" (ngSubmit)="transferAuthorityOnSubmit()">
+                    <!-- users edit account form start -->
+                 
+                      <div class="row" >
+                           <!-- select Org. Drop down  -->
+                           <div class="col-12">
+                            <div class="form-group row">
+                              <div class="col-sm-2 col-form-label">
+                                <label>{{ 'HEADER.ORGANIZATIONNAME' | translate }} : </label>
+                              </div>
+                              <div class="col-sm-3">
+                                <div class="form-group">
+                                  <ng-select 
+                                  bindLabel="name" 
+                                  placeholder="{{ 'HEADER.SELECTORGANIZATIONNAME' | translate }}" 
+                                  formControlName="orgnizationName"
+                                  [ngClass]="{ 'is-invalid': TransferAuthorityFormSubmitted && TAFormControls.orgnizationName.errors }"
+                                  (change)="onOrgnizationSelect($event)"
+                                  (clear)="onOrganizationRemove()"
+                                  >
+                                  <ng-option *ngFor="let item of organizationName" [value]="item.id" >
+                                      {{item.name}}
+                                  </ng-option>
+                              </ng-select>
+                                  <div
+                                    *ngIf="TransferAuthorityFormSubmitted && TAFormControls.orgnizationName.errors"
+                                    class="invalid-feedback"
+                                  >
+                                    <div *ngIf="TAFormControls.orgnizationName.errors.required">Orgnization Name is required</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                             <!-- selectrole id Drop down  -->
+                             <div class="col-12">
+                              <div class="form-group row">
+                                <div class="col-sm-2 col-form-label">
+                                  <label>{{ 'HEADER.SELECTROLE' | translate }} : </label>
+                                </div>
+                                <div class="col-sm-3">
+                                  <div class="form-group">
+                                    <ng-select 
+                                    bindLabel="name" 
+                                    placeholder="{{ 'HEADER.SELECTROLETYPE' | translate }}" 
+                                    formControlName="role_id"
+                                    [ngClass]="{ 'is-invalid': TransferAuthorityFormSubmitted && TAFormControls.role_id.errors }"
+                                    (change)="onRoleSelect($event)"
+                                    (clear)="onOrganizationRemove()"
+                                    >
+                                    <ng-option *ngFor="let item of selectRole" [value]="item.id" >
+                                        {{item.name}}
+                                    </ng-option>
+                                </ng-select>
+                                    <div
+                                      *ngIf="TransferAuthorityFormSubmitted && TAFormControls.role_id.errors"
+                                      class="invalid-feedback"
+                                    >
+                                      <div *ngIf="TAFormControls.role_id.errors.required">Role  is required</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        
+                               <!-- select Transfer from Drop down  -->
+                        <div class="col-12">
+                          <div class="form-group row">
+                            <div class="col-sm-2 col-form-label">
+                              <label>{{ 'HEADER.TRANSFERFROM' | translate }} : </label>
+                            </div>
+                            <div class="col-sm-3">
+                              <div class="form-group">
+                                <ng-select 
+                                bindLabel="name" 
+                                placeholder="{{ 'HEADER.SELECTSUBADMIN' | translate }}" 
+                                formControlName="transferfrom"
+                                (clear)="onFromSubAdminRemove()"
+                                [ngClass]="{ 'is-invalid': TransferAuthorityFormSubmitted && TAFormControls.transferfrom.errors }"
+                                >
+                                <ng-option *ngFor="let item of subAdmin" [value]="item.id">
+                                    {{item.name}}
+                                </ng-option>
+                            </ng-select>
+                                <div
+                                  *ngIf="TransferAuthorityFormSubmitted && TAFormControls.transferfrom.errors"
+                                  class="invalid-feedback"
+                                >
+                                  <div *ngIf="TAFormControls.transferfrom.errors.required">Transfer From is required</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                          <!-- transfer to Sub admin selection -->
+                        <div class="col-12">
+                          <div class="form-group row">
+                            <div class="col-sm-2 col-form-label">
+                              <label>{{ 'HEADER.TRANSFERTO' | translate }} : </label>
+                            </div>
+                            <div class="col-sm-3">
+                              <div class="form-group">
+                                <ng-select 
+                                bindLabel="name" 
+                                placeholder="{{ 'HEADER.SELECTSUBADMIN' | translate }}" 
+                                formControlName="transferto"
+                                [ngClass]="{ 'is-invalid': TransferAuthorityFormSubmitted && TAFormControls.transferto.errors }"
+                                >
+                                <ng-option *ngFor="let item of subAdminList2" [value]="item.id">
+                                    {{item.name}}
+                                </ng-option>
+                            </ng-select>
+                                <div
+                                  *ngIf="TransferAuthorityFormSubmitted && TAFormControls.transferto.errors"
+                                  class="invalid-feedback"
+                                >
+                                  <div *ngIf="TAFormControls.transferto.errors.required">Transfer To is required</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+  
+  
+                       <!-- submit button -->
+                        <div class="col-12 d-flex flex-sm-row flex-column mt-2">
+                          <button type="submit"  class="btn btn-primary mr-1"  rippleEffect>
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>{{ 'HEADER.SUBMIT' | translate }}</button>
+                            <button
+                            type="reset"
+                            class="btn btn-outline-secondary"
+                            (click)="cancel()"
+                            rippleEffect>{{ 'HEADER.CANCEL' | translate }}
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                    <!-- users edit account form ends -->
+                  </div>
+                  <!-- Account Tab ends -->
+                </ng-template>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+          </div>
+        </div>
+      </section>
+      <!-- users edit ends -->
+    </div>
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

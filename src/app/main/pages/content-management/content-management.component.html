@@ -1,0 +1,95 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- users edit start -->
+    <section class="app-user-add">
+      <div class="card">
+        <div class="card-body">
+
+          
+          <div class="row mt-1 ml-1">
+            <div class="flexclass">
+            <h6 class="colortext">{{'HEADER.SELECTCOLORSCHEME' | translate}}</h6>
+            <!-- <ng-select class="browser-default custom-select cms-select ml-3" [(ngModel)]="selectedValue" (change)="onColorChange()">
+              <ng-option value="Green">Default</ng-option>
+              <ng-option value="Royal_Blue">Royal Blue</ng-option>
+              <ng-option value="Cadillac">Cadillac</ng-option>
+              <ng-option value="Turquoise">Turquoise</ng-option>
+              <ng-option value="Hippie_Green">Hippie Green</ng-option>
+              <ng-option value="Tangerine">Tangerine</ng-option>
+            </ng-select> -->
+
+            <fieldset class="form-group ml-3">
+                      <ng-select
+                      class="dropdownClass"
+                        [items]="colorArray"
+                        [(ngModel)]="selectedValue"
+                        [clearable]="false"
+                        name="selectedRole"
+                        bindLabel="name"
+                        bindValue = "colorName"
+                        placeholder="Select Color Scheme"
+                        (change)="onColorChange()"
+                      ></ng-select>
+                    </fieldset>  
+
+            <!-- <div class="dropdown">
+              <button class="btn btn-outline-secondary ml-2 dropdown-toggle"  type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Default
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <button value="Green" class="dropdown-item" type="button">Royal_Blue</button>
+                <button value="Royal_Blue" class="dropdown-item" type="button">Cadillac</button>
+                <button  value="Cadillac" class="dropdown-item" type="button">Turquoise</button>
+                <button value="Turquoise" class="dropdown-item" type="button">Hippie Green</button>
+                <button value="Hippie_Green" class="dropdown-item" type="button">Tangerine</button>
+                <button value="Tangerine" class="dropdown-item" type="button">Tangerine</button>
+              </div>
+            </div> -->
+
+          </div>
+          </div>
+
+
+          <div class="row mt-4 mb-2 ml-2">
+            <img src="/assets/images/Color_scheme_layouts/{{selectedValue}}.png" alt="" srcset="">
+          </div>
+          <!-- submit button -->
+
+
+          <div class="col-12 d-flex flex-sm-row flex-column mt-4 mb-2" >
+            <button type="submit" class="btn btn-primary mr-1" rippleEffect (click)="saveTheme(themeModal)" *ngIf="canEdit">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1" ></span>{{
+              'HEADER.SUBMIT' | translate }}</button>
+            <button type="reset" class="btn btn-outline-secondary" (click)="cancel()" rippleEffect>{{ 'HEADER.CANCEL' |
+              translate }}
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <!-- users edit ends -->
+  </div>
+</div>
+
+
+
+<ng-template #themeModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">{{'HEADER.CHANGECOLORTHEME' | translate }}</h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body lh-sm" tabindex="0" ngbAutofocus>
+    {{'HEADER.CONFIRMMESSAGE' | translate }}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="Save()" rippleEffect>
+      {{'HEADER.SAVE' | translate }}
+    </button>
+    <button type="button" class="btn btn-info" (click)="modal.close('Accept click')" rippleEffect>{{'HEADER.CANCEL' | translate }}
+      
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,57 @@
+.cursor{
+  cursor : pointer;
+}
+
+.custom-sidebar {
+  width: 259px;
+  position: relative;
+  .toggle {
+    position: absolute;
+    right: -14px;
+    top: 14px;
+      height: 30px;
+      width: 30px;
+      background: #7367f0;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    border-radius: 50%;
+    box-shadow: 0px 4px 32px rgb(115 103 240 / 15%);
+    z-index: 1;
+  }
+  
+  .top-member {
+    font-family: 'Montserrat', Helvetica, Arial, serif;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0px;
+    text-align: right;
+    padding: 20px 20px 0px;
+    color: #babfc7;
+  }
+  .chal-list {
+    padding: 20px 20px 0px;
+    h4 {
+      font-family: 'Montserrat', Helvetica, Arial, serif;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 17px;
+      letter-spacing: 0px;
+      text-align: left;
+    }
+  }
+}
+.chat-sidebar {
+  left: 0px;
+  top: 0;
+  border-right: 1px solid #ebe9f1;
+  width: 50px;
+  background: #fff;
+  position: absolute;
+ 
+}
+

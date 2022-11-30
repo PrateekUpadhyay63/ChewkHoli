@@ -1,0 +1,92 @@
+<!-- Chat Sidebar area -->
+<div class="chat-sidebar  custom-sidebar ">
+  <button
+    class="btn sidebar-close-icon "
+    (click)="toggleSidebar('chat-user-sidebar')"
+  >
+    <i data-feather="x"></i>
+  </button>
+  <!-- Sidebar header start -->
+  <div class="rotate-wrapper ">
+    <!-- <div class="d-flex align-items-center w-100">
+      <div class="sidebar-profile-toggle">
+        <button class="btn avatar avatar-border bg-transparent p-0" (click)="toggleSidebar('chat-user-sidebar')">
+          <img [src]="userProfile.avatar" alt="user_avatar" height="42" width="42" />
+          <span
+            [ngClass]="{
+              'avatar-status-offline': userProfile.status == 'offline',
+              'avatar-status-online': userProfile.status == 'online',
+              'avatar-status-busy': userProfile.status == 'busy',
+              'avatar-status-away': userProfile.status == 'away'
+            }"
+          ></span>
+        </button>
+      </div>
+      <div class="input-group input-group-merge ml-1 w-100">
+        <div class="input-group-prepend">
+          <span class="input-group-text round"><i data-feather="search" class="text-muted"></i></span>
+        </div>
+        <input
+          type="text"
+          class="form-control round"
+          id="chat-search"
+          placeholder="Search or start a new chat"
+          aria-label="Search..."
+          aria-describedby="chat-search"
+          [(ngModel)]="searchText"
+        />
+      </div>
+    </div> -->
+    <div class="toggle cursor" (click)="toggleSidebar('chat-user-sidebar')" >
+      <div class="icon-wrapper"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+    </div>
+  </div>
+  <!-- Sidebar header end -->
+
+  <!-- Sidebar Users start -->
+  <!-- <div id="users-list" class="chat-user-list-wrapper list-group" [perfectScrollbar]>
+    <ng-container *ngIf="(chatUsers | filter: searchText:'fullName').length; else noResultsChats"></ng-container>
+    <ul class="chat-users-list chat-list media-list">
+      <li
+        *ngFor="let chatUser of chatUsers | filter: searchText:'fullName'; let i = index"
+        [class.active]="selectedIndex === i"
+        (click)="openChat(chatUser.id); toggleSidebar('chat-sidebar'); setIndex(i)"
+      >
+        <span class="avatar"  *ngIf="chatUser.image != null && chatUser.image !='' ; else elseTemplate"
+          ><img [src]="chatUser.image" height="42" width="42" alt=" image" />
+        </span>
+        <div class="chat-info flex-grow-1">
+          <h5 class="mb-0">{{ chatUser.name }}</h5>
+          <p class="card-text text-truncate">
+            {{ chatUser?.about }}
+          </p>
+        </div>
+        <div class="chat-meta text-nowrap">
+          <small class="float-right mb-25 chat-time">4:14 PM</small>
+          <span *ngIf="chatUser.unseenMsgs >= 1" class="float-right badge badge-danger badge-pill">{{
+            chatUser?.unseenMsgs
+          }}</span>
+        </div>
+      </li>
+
+      <ng-template #noResultsChats>
+        <li class="no-results" [ngClass]="{ show: (chatUsers | filter: searchText:'fullName').length <= 0 }">
+          <h6 class="mb-0">No Chats Found</h6>
+        </li>
+      </ng-template>
+
+      <ng-template #elseTemplate>
+        <span class="avatar">
+        <img src="../../../../../../../assets//images/avatars/1-small.png" height="42" width="42" alt=" image" />
+      </span>
+      </ng-template>
+    </ul>
+  </div> -->
+  <!-- Sidebar Users end -->
+  <div class="rotate-wrapper h-100">
+    <h3>{{'HEADER.MEMBERLIST' | translate }}</h3>
+    
+  </div>
+  
+</div>
+<!--/ Chat Sidebar area -->

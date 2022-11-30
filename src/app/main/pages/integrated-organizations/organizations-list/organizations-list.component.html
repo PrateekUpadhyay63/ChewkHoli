@@ -1,0 +1,414 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- User List -->
+    <section class="users-list-wrapper">
+      <div class="card">
+        <div class="row d-flex justify-content-between m-1">
+          <div class="col-md-9 col-9">
+            <div class="input-group search-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="{{ 'HEADER.SEARCHBYORG' | translate }}"
+                [(ngModel)]="searchValue"
+                (keyup)="onOrganizationSearch()"
+              />
+              <button
+                type="button"
+                *ngIf="searchValue.length > 0"
+                (click)="onSearchClear()"
+                class="btn bg-transparent onSearch"
+              >
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <!-- <div class="col-md-3 col-3 ">
+                    <fieldset class="form-group">
+                      <ng-select
+                        [items]="selectOrg"
+                        [(ngModel)]="selectedOrg"
+                        name="selectedRole"
+                        bindLabel="value"
+                        placeholder="Select Organization"
+                        (change)="filterByOrg($event)"
+                      ></ng-select>
+                    </fieldset>  
+            </div> -->
+
+          <div class="col-md-3 col-3" *ngIf="canAddUser">
+            <button
+              class="btn btn-primary"
+              rippleEffect
+              (click)="modalOpenAddOrg(modalAddOrg)"
+            >
+              <i
+                data-feather="plus"
+                class="d-sm-none d-inline-block mr-0 mr-sm-1"
+              ></i
+              ><span class="d-none d-sm-inline-block">{{
+                "HEADER.ADDORGANIZATION" | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+        <ngx-datatable
+          [rows]="rows"
+          [rowHeight]="50"
+          class="bootstrap core-bootstrap"
+          [limit]="selectedOption"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [scrollbarH]="true"
+        >
+          <ngx-datatable-column
+            name="{{ 'HEADER.ORGANIZATIONNAME' | translate }}"
+            prop="name"
+            [width]="150"
+          >
+            <ng-template
+              let-row="row"
+              let-name="value"
+              ngx-datatable-cell-template
+            >
+              <div class="d-flex align-items-center">
+                <div class="cell-line-height">
+                  <span class="font-weight-bold"
+                    >{{ row.name | titlecase | truncate: 20 }}
+                  </span>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.ADDEDTIME' | translate }}"
+            prop="created_at"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ 'HEADER.UPDATETIME' | translate }}"
+            prop="updated_at"
+            [width]="80"
+          >
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | customDate | date: "dd/MM/yyyy hh:mm a" }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ 'HEADER.ACTIONS' | translate }}"
+            [width]="60"
+            [sortable]="false"
+            *ngIf="canViewUser || canEditUser || canDeleteUser"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div ngbDropdown container="body">
+                <button
+                  ngbDropdownToggle
+                  type="button"
+                  class="btn icon-btn btn-sm hide-arrow"
+                  rippleEffect
+                >
+                  <span
+                    [data-feather]="'more-vertical'"
+                    [class]="'cursor-pointer'"
+                  ></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <span
+                    (click)="modalOpenEditOrg(modalEditOrg, row.id, row.name)"
+                    ngbDropdownItem
+                    ><span
+                      [data-feather]="'edit'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.EDIT" | translate }}</span
+                  ><span
+                    href=""
+                    ngbDropdownItem
+                    (click)="
+                      modalOpenDeleteOrg(
+                        modalDeleteOrg,
+                        row.id,
+                        row.name,
+                        row.deletable
+                      )
+                    "
+                    ><span
+                      [data-feather]="'trash'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    {{ "HEADER.DELETE" | translate }}</span
+                  >
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="1"
+            [size]="page.limit"
+            [count]="page.limit"
+          >
+          </datatable-pager>
+        </ngx-datatable>
+
+        <div class="pagination mb-2" *ngIf="rows?.length">
+          <ul class="pager">
+            <i
+              *ngIf="current_page > 1"
+              class="datatable-icon-left"
+              (click)="pagePrev()"
+            ></i>
+            <ng-container *ngFor="let pages of fakeArray; let p = index">
+              <ng-container *ngIf="p + 1 > pageIfy && p + 1 <= pageIfx">
+                <li
+                  class="numbers"
+                  [ngClass]="
+                    p + 1 == current_page ? 'numbers-active' : 'numbers'
+                  "
+                  (click)="pagination(p + 1)"
+                >
+                  {{ p + 1 }} &nbsp;
+                </li>
+              </ng-container>
+            </ng-container>
+            <i
+              *ngIf="current_page < page.count"
+              class="datatable-icon-right"
+              (click)="pageNext()"
+            ></i>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!--/ User List -->
+  </div>
+
+  <!-- New User Sidebar -->
+  <!-- <core-sidebar
+      class="modal modal-slide-in sidebar-todo-modal fade"
+      name="new-user-sidebar"
+      overlayClass="modal-backdrop"
+    >
+      <app-add-user></app-add-user>
+    </core-sidebar> -->
+  <!--/ New User Sidebar -->
+
+  <!-- Delete Modal -->
+
+  <ng-template #modalDeleteOrg let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">
+        {{ "HEADER.DELETEORGANIZATION" | translate }}
+      </h5>
+      <button
+        type="button"
+        class="close"
+        (click)="modal.dismiss('Cross click')"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div
+      *ngIf="isOrgnizationDeletable"
+      class="modal-body lh-sm text-wrap text-break"
+      tabindex="0"
+      ngbAutofocus
+    >
+      {{ "HEADER.DELETEMODALMSG" | translate }} {{ groupName | titlecase }}?
+    </div>
+    <div
+      *ngIf="!isOrgnizationDeletable"
+      class="modal-body lh-sm text-wrap text-break"
+      tabindex="0"
+      ngbAutofocus
+    >
+      {{ groupName | titlecase }} {{ "HEADER.ORGANIZATIONDELET" | translate }}
+    </div>
+    <div class="modal-footer">
+      <button
+        *ngIf="isOrgnizationDeletable"
+        type="button"
+        class="btn btn-danger"
+        (click)="deleteOrg(deleterGroupId)"
+        rippleEffect
+      >
+        {{ "HEADER.DELETE" | translate }}
+      </button>
+      <button
+        *ngIf="isOrgnizationDeletable"
+        type="button"
+        class="btn btn-info"
+        (click)="modal.close('Accept click')"
+        rippleEffect
+      >
+        {{ "HEADER.CANCEL" | translate }}
+      </button>
+      <button
+        *ngIf="!isOrgnizationDeletable"
+        type="button"
+        class="btn btn-success"
+        (click)="modal.close('Accept click')"
+        rippleEffect
+      >
+        {{ "HEADER.CLOSE" | translate }}
+      </button>
+    </div>
+  </ng-template>
+  <!-- / Delete Modal -->
+
+  <!-- Edit Org. Modal -->
+  <ng-template #modalEditOrg let-modal>
+    <form [formGroup]="editOrgnizationForm">
+      <div class="modal-header">
+        <h5 class="modal-title modal-primary" id="myModalLabel160">
+          {{ "HEADER.EDITORGANIZATION" | translate }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="modal.dismiss('Cross click')"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0">
+        <label>{{ "HEADER.ORGANIZATIONNAME" | translate }}: </label>
+        <div class="form-group">
+          <input
+            name="OrgnizationNameEdit"
+            formControlName="OrgnizationNameEdit"
+            [ngClass]="{
+              'is-invalid':
+                submitted && editOrgNameFormControl.OrgnizationNameEdit.errors
+            }"
+            required
+            type="text"
+            maxlength="30"
+            placeholder="{{ 'HEADER.ORGANIZATIONNAME' | translate }}"
+            class="form-control"
+          />
+        </div>
+        <div
+          *ngIf="
+            submitted && editOrgNameFormControl.OrgnizationNameEdit.invalid
+          "
+          class="form-text text-danger"
+        >
+          <span
+            *ngIf="editOrgNameFormControl.OrgnizationNameEdit.errors.required"
+          >
+            {{ "HEADER.ORGANIZATIONREQUIRED" | translate }}</span
+          >
+          <small
+            *ngIf="editOrgNameFormControl.OrgnizationNameEdit.errors.minlength"
+            >{{ "HEADER.ORGANIZATIONCHAR" | translate }}</small
+          >
+          <small
+            *ngIf="editOrgNameFormControl.OrgnizationNameEdit.errors.maxlength"
+          >
+            {{ "HEADER.ORGANIZATIONCHAR30" | translate }}
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="submit"
+          (click)="UpdateOrgName()"
+          class="btn btn-primary"
+          rippleEffect
+        >
+          {{ "HEADER.SAVECHANGES" | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="modal.close('Accept click')"
+          rippleEffect
+        >
+          {{ "HEADER.CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-template>
+  <!-- / Edit Org. Modal -->
+
+  <!-- Add Org. Modal -->
+  <ng-template #modalAddOrg let-modal>
+    <form [formGroup]="addOrgnizationForm" (ngSubmit)="addNweOrg()">
+      <div class="modal-header">
+        <h5 class="modal-title modal-primary" id="myModalLabel160">
+          {{ "HEADER.ADDORGANIZATION" | translate }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          (click)="modal.dismiss('Cross click')"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0">
+        <label>{{ "HEADER.ORGANIZATIONNAME" | translate }}: </label>
+        <div class="form-group">
+          <input
+            name="OrgnizationName"
+            formControlName="OrgnizationName"
+            [ngClass]="{
+              'is-invalid':
+                submitted && addOrgNameFormControl.OrgnizationName.errors
+            }"
+            required
+            type="text"
+            maxlength="30"
+            placeholder="{{ 'HEADER.ORGANIZATIONNAME' | translate }}"
+            class="form-control"
+          />
+        </div>
+        <div
+          *ngIf="submitted && addOrgNameFormControl.OrgnizationName.invalid"
+          class="form-text text-danger"
+        >
+          <span *ngIf="addOrgNameFormControl.OrgnizationName.errors.required">{{
+            "HEADER.ORGANIZATIONREQUIRED" | translate
+          }}</span>
+          <small *ngIf="addOrgNameFormControl.OrgnizationName.errors.minlength">
+            {{ "HEADER.ORGANIZATIONCHAR" | translate }}
+          </small>
+          <small *ngIf="addOrgNameFormControl.OrgnizationName.errors.maxlength"
+            >{{ "HEADER.ORGANIZATIONCHAR30" | translate }}
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" rippleEffect>
+          {{ "HEADER.ADD" | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="modal.close('Accept click')"
+          rippleEffect
+        >
+          {{ "HEADER.CANCEL" | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-template>
+  <!-- / Add Org. Modal -->
+</div>

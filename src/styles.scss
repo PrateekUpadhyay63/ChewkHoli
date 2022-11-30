@@ -1,0 +1,108 @@
+@import "@core/scss/core.scss";
+@import "./assets/scss/styles";
+@import "@core/scss/angular/libs/toastr.component.scss";
+@import "@core/scss/angular/libs/datatables.component.scss";
+@import "@core/scss/base/pages/app-user.scss";
+@import "@core/scss/angular/libs/select.component.scss";
+@import '@core/scss/angular/libs/context-menu.component.scss';
+@import '@core/scss/base/plugins/charts/chart-apex';
+
+input[type="search"]::-webkit-search-decoration:hover,
+input[type="search"]::-webkit-search-cancel-button:hover {
+  cursor: pointer;
+}
+
+// MAp styles
+@import "~maplibre-gl/dist/maplibre-gl.css";
+
+body {
+  margin: 0;
+  // font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  //   "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  //   sans-serif;
+  font-family:  -apple-system, BlinkMacSystemFont, "Montserrat", Helvetica, Arial, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.vehicle-marker {
+  height: 60px;
+  width: 65px;
+  border: none;
+  background-image: url(./assets/vehicle-marker.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.member-marker {
+  height: 60px;
+  width: 65px;
+  border: none;
+  background-image: url(./assets/member-marker.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.ipcamera-marker {
+  height: 60px;
+  width: 65px;
+  border: none;
+  background-image: url(./assets/ipcameramarker.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.pindrop-marker {
+  height: 60px;
+  width: 65px;
+  border: none;
+  background-image: url(./assets/pindropmarker.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.custom-right .custom-chat .toggle{
+  z-index: 9999 !important;
+}
+
+
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.ngx-contextmenu.cdk-overlay-pane {
+  position: absolute;
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+// not required but can help with mobile right click
+.target {
+  user-select: none;
+}
+
+.search-group{
+  position: relative;
+  input{
+      width: 100%;
+      border-radius: 0.357rem !important;
+      padding-right: 25px;
+  }
+  button{
+      position: absolute;
+      right: -10px;
+  }
+}
